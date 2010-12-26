@@ -1,0 +1,18 @@
+<p id="imagedisplay">
+ <img src="/photo/{{_id}}/800x600.jpg" alt="full image"/>
+</p>
+
+<p>Tags:
+  {{#kw}}
+  <a href="/photo/_show/tag/{{name}}">{{name}}</a>
+  {{/kw}}
+</p>
+
+<p>Size:  {{width}}x{{height}} ({{size}} bytes)</p>
+
+<p>Taken: {{taken}}, Added: {{ts}} by {{addedby}}</p>
+
+<h2>Description</h2>
+<p>
+  {{descr}}
+</p>

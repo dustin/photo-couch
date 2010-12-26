@@ -1,0 +1,9 @@
+function(data) {
+  var p;
+  return {
+    items : data.rows.map(function(r) {
+                              r.value.has_image = r.value.image != '';
+                              return r.value;
+                          })
+  }
+};
