@@ -1,4 +1,0 @@
-<p>
- So, you want to see this photo:
- <a href="_show/item/{{_id}}"><img src="/photo/{{_id}}/thumb.jpg" alt="thumbnail"/></a>
-</p>
