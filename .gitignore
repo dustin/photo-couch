@@ -2,3 +2,7 @@
 *~
 .#*
 /.couchapprc
+/_attachments/style/ie.css
+/_attachments/style/print.css
+/_attachments/style/screen.css
+/compass/.sass-cache/
