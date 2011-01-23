@@ -14,20 +14,18 @@ h1 {
 }
 
 #profile {
-  border:4px solid #edd;
   background:#fee;
   padding:8px;
   margin-bottom:8px;
 }
 
 #items {
-  border:4px solid #dde;
   padding:8px;
-  width:800px;
+  width: 66%;
+  float: left;
 }
 
 #sidebar {
-  border:4px solid #dfd;
   padding:8px;
   float:right;
   width:30%;
@@ -86,4 +84,41 @@ div.avatar img {
 	display:inline; /* Unhide the thumbnails */
 	position:relative;
 	margin-right:10px;
+}
+
+#cloudcontainer {
+}
+
+#cloudcontainer a {
+    text-decoration: none;
+}
+
+.tag0 {
+	background: inherit;
+	color: blue;
+    font-size: 250%;
+}
+
+.tag1 {
+	background: inherit;
+	color: #22f;
+    font-size: 200%;
+}
+
+.tag2 {
+	background: inherit;
+	color: #66f;
+    font-size: 100%;
+}
+
+.tag3 {
+	background: inherit;
+	color: #88f;
+    font-size: 70%;
+}
+
+.tag4 {
+	background: inherit;
+	color: #bbf;
+    font-size: 50%;
 }
