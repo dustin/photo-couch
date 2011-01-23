@@ -1,8 +1,11 @@
-<p>
+<div id="slider" class="nivoSlider">
 {{#items}}
   <a href="_show/item/{{_id}}">
-    <img src="/photo/{{_id}}/thumb.jpg" alt="thumbnail"
+    <img src="/photo/{{_id}}/800x600.jpg" alt="a photo"
+         rel="/photo/{{_id}}/thumb.jpg"
          title="{{descr}}"/>
   </a>
 {{/items}}
-</p>
+<div class="nivo-controlNav">
+</div>
+</div>
