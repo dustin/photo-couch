@@ -25,12 +25,6 @@
     $.couch.app(function(app) {
       $.evently.connect("#account","#profile", ["loggedIn","loggedOut"]);
       $("#items").evently("items", app);
-      setTimeout(function() { $('#slider').nivoSlider({
-        afterChange: function() {
-           $('#slider').css('background', 'white');
-        },
-        controlNav:false
-      }); }, 2000);
     });
   </script>
 </html>
