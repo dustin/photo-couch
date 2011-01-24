@@ -1,0 +1,73 @@
+/* Welcome to Compass.
+ * In this file you should write your main styles. (or centralize your imports)
+ * Import this file using the following HTML or equivalent:
+ * <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css" /> */
+
+@import "compass/reset"
+@import "blueprint"
+
+body
+  +blueprint
+
+#items
+  padding: 8px
+  width:   66%
+  float:   left
+
+  #slider
+    position: relative
+    width: 800px
+    height: 600px
+    background: url(../images/loading.gif) no-repeat 50% 50%
+
+    img
+      position: absolute
+      top: 0
+      left: 200px
+      display: none
+
+    a
+      border: 0
+      display: block
+
+    .nivo-controlNav
+      position: aboslute
+      bottom: -70px
+
+      img
+        display: inline
+        position: relative
+        margin-right: 10px
+
+#sidebar
+  padding: 8px
+  float: right
+  width: 30%
+
+  #cloudcontainer a
+    text-decoration: none
+
+  .tag0
+    background: inherit
+    color: blue
+    font-size: 250%
+
+  .tag1
+    background: inherit
+    color: #22f
+    font-size: 200%
+
+  .tag2
+    background: inherit
+    color: #66f
+    font-size: 100%
+
+  .tag3
+    background: inherit
+    color: #88f
+    font-size: 70%
+
+  .tag4
+    background: inherit
+    color: #bbf
+    font-size: 50%
