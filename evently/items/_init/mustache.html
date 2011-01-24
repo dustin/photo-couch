@@ -1,9 +1,15 @@
 <div id="slider" class="slideshow">
+<script type="text/javascript">
+  var slideshowCaptions = [];
+{{#items}}
+  slideshowCaptions.push("{{descr}}");
+{{/items}}
+</script>
 {{#items}}
   <a href="_show/item/{{_id}}">
     <img src="/photo/{{_id}}/800x600.jpg" alt="a photo"
          title="{{descr}}"/>
   </a>
 {{/items}}
-<p id="caption"></p>
 </div>
+<p id="caption"></p>
