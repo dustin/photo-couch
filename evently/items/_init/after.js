@@ -7,6 +7,4 @@ function() {
         }
     });
     $('#caption').html(slideshowCaptions[0]);
-    $('#slider a').css('display: block');
-    $('#slider img').css('display: block');
 }
