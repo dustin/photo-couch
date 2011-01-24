@@ -1,8 +1,10 @@
 function() {
-    $('#slider').nivoSlider({
-        afterChange: function() {
-            $('#slider').css('background', 'white');
-        },
-        controlNav:false
+    $('#slider').cycle({
+	    fx: 'scrollLeft',
+        sync: true,
+        after: function() {
+            $('#caption').html(this.alt);
+        }
     });
+    $('#slider img').css('display: block');
 }
