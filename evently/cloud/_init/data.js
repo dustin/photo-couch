@@ -35,11 +35,18 @@ function(data) {
 
     tags = [];
 
+    /* Argh.  need to figure out how to get this from the app */
+    function listPath(l, v, args) {
+        return '/photo/_design/photo-couch/_list/' + l + '/' +
+            v + '?key=%22' + args.key + '%22';
+    }
+
     for (var i = 0; i < clumps.length; ++i) {
         for (var j = 0; j < clumps[i].length; ++j) {
             tags.push({key: clumps[i][j].key,
                        count: clumps[i][j].value,
-                       weight: i});
+                       weight: i,
+                       link: listPath('tag', 'tag', {key: clumps[i][j].key})});
         }
     }
 
