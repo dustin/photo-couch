@@ -13,7 +13,6 @@
 
   <script type="text/javascript" charset="utf-8">
     $.couch.app(function(app) {
-      $.evently.connect("#account","#profile", ["loggedIn","loggedOut"]);
       $("#items").evently("items", app);
       $("#sidebar").evently("cloud", app);
     });
