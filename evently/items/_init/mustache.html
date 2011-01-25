@@ -6,9 +6,8 @@
 {{/items}}
 </script>
 {{#items}}
-  <a href="_show/item/{{_id}}">
-    <img src="/photo/{{_id}}/800x600.jpg" alt="a photo"
-         title="{{descr}}"/>
+  <a href="{{showLink}}">
+    <img src="{{imageLink}}" alt="a photo" title="Working: {{descr}}"/>
   </a>
 {{/items}}
 </div>

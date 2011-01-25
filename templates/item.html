@@ -7,12 +7,12 @@
   <body>
 
 <p id="imagedisplay">
- <img src="/photo/{{_id}}/800x600.jpg" alt="full image"/>
+ <img src="{{imageLink}}" alt="full image"/>
 </p>
 
 <p>Tags:
   {{#kw}}
-  <a href="/photo/_design/photo-couch/_list/tag/tag?key=%22{{name}}%22">{{name}}</a>
+  <a href="{{link}}">{{name}}</a>
   {{/kw}}
 </p>
 

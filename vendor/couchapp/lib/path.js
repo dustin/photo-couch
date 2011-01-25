@@ -26,7 +26,7 @@ function concatArgs(array, args) {
 
 function makePath(array) {
   var options, path;
-  
+
   if (typeof array[array.length - 1] != "string") {
     // it's a params hash
     options = array.pop();
@@ -35,7 +35,7 @@ function makePath(array) {
   if (options) {
     return path + encodeOptions(options);
   } else {
-    return path;    
+    return path;
   }
 };
 
@@ -43,6 +43,10 @@ exports.init = function(req) {
   return {
     asset : function() {
       var p = req.path, parts = ['', p[0], p[1] , p[2]];
+      return makePath(concatArgs(parts, arguments));
+    },
+    attachment : function() {
+      var p = req.path, parts = ['', p[0]];
       return makePath(concatArgs(parts, arguments));
     },
     show : function() {
