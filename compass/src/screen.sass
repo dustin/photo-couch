@@ -9,6 +9,11 @@
 body
   +blueprint
 
+@mixin bordered-image
+  padding: 15px
+  border: 1px solid #ccc
+  background-color: #eee
+
 #items
   padding: 8px
   width:   70%
@@ -23,14 +28,33 @@ body
       border: 0
 
       img
-        padding: 15px
-        border: 1px solid #ccc
-        background-color: #eee
+        @include bordered-image
 
   #caption
     background: inherit
     color: black
     font-size: 12px
+
+#showphoto
+
+  #imagedisplay
+    margin: auto
+    text-align: center
+
+    img
+      margin-top: 10px
+      @include bordered-image
+
+  #info
+    margin-left: 5em
+    margin-right: 5em
+
+    p
+      margin-bottom: 1em
+
+    #description
+      padding-left: 2em
+      padding-right: 2em
 
 #sidebar
   padding: 8px

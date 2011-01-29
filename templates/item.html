@@ -4,26 +4,31 @@
     <title>Sallings Photo Album</title>
     <link rel="stylesheet" href="../../style/screen.css" type="text/css">
   </head>
-  <body>
+  <body id="showphoto">
 
 <p id="imagedisplay">
  <img src="{{imageLink}}" alt="full image"/>
 </p>
 
-<p>Tags:
-  {{#kw}}
-  <a href="{{link}}">{{name}}</a>
-  {{/kw}}
-</p>
+<div id="info">
 
-<p>Size:  {{width}}x{{height}} ({{size}} bytes)</p>
+  <p>Tags:
+    {{#kw}}
+    <a href="{{link}}">{{name}}</a>
+    {{/kw}}
+  </p>
 
-<p>Taken: {{taken}}, Added: {{ts}} by {{addedby}}</p>
+  <p>Size:  {{width}}x{{height}} ({{size}} bytes)</p>
 
-<h2>Description</h2>
-<p>
-  {{descr}}
-</p>
+  <p>Taken: {{taken}}, Added: {{ts}} by {{addedby}}</p>
+
+  <p>Category:  {{cat}}</p>
+
+  <h2>Description</h2>
+  <p id="description">
+    {{descr}}
+  </p>
+</div>
 
 </body>
 </html>
