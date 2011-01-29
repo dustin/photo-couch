@@ -6,5 +6,5 @@ function() {
             $('#caption').html(slideshowCaptions[opts.currSlide]);
         }
     });
-    $('#caption').html(slideshowCaptions[0]);
+    $('#caption').innerHtml(slideshowCaptions[0]);
 }

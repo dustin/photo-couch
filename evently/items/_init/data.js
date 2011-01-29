@@ -13,7 +13,14 @@ function(data) {
   while (all_items.length > 0 && items.length < 10) {
       var offset = Math.floor(Math.random() * all_items.length);
       var anItem = all_items[offset];
-      anItem.cleanDescr = cleanString(anItem.descr);
+      var tags = anItem.keywords;
+      tags.sort();
+      var taglinks = tags.map(function(t) {
+                       var l = path.list('tag', 'tag', {key: t});
+                       return "<a href=" + l + ">" + t + "</a>";
+                      });
+      anItem.cleanDescr = anItem.taken + " - " + cleanString(anItem.descr) + " (" +
+                       taglinks.join(", ") + ")";
       anItem.showLink = path.show('item', anItem._id);
       anItem.imageLink = path.attachment(anItem._id, '800x600.jpg');
       items.push(anItem);
