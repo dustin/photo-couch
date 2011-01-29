@@ -4,21 +4,15 @@ function(doc, req) {
     return true;
   }
 
-  // make sure we don't access any fields that
-  // might be undefined
   if(!doc.cat) {
     return false;
   }
 
   if(!req.query.cat) {
-    throw("Please provide a query parameter `name`.");
+    throw("Please provide a query parameter `cat`.");
   }
 
-  // else
-
   if(doc.cat == req.query.cat) {
-    // the query parameter `name` matches
-    // the corresponding field in `doc`
     return true;
   }
 
