@@ -6,7 +6,10 @@
   </head>
   <body>
     <div id="items"></div>
-    <div id="sidebar"></div>
+    <div id="sidebar">
+      <div id="cloudcontainer"></div>
+      <a href="_list/recent/recent-items?descending=true&amp;limit=50">Recent Images</a>
+    </div>
   </body>
   <script src="vendor/couchapp/loader.js"></script>
   <script type="text/javascript" src="js/jquery.cycle.all.min.js"></script>
@@ -14,7 +17,7 @@
   <script type="text/javascript" charset="utf-8">
     $.couch.app(function(app) {
       $("#items").evently("items", app);
-      $("#sidebar").evently("cloud", app);
+      $("#cloudcontainer").evently("cloud", app);
     });
   </script>
 </html>
