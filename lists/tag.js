@@ -16,6 +16,9 @@ function(head, req) {
 		while(row = getRow()) {
 			send(Mustache.to_html(templates.tag.row, {
 				id: row.value._id,
+                ts: row.value.ts,
+                taken: row.value.taken,
+                description: row.value.description,
 				show: path.show('item', row.value._id),
                 thumb: path.attachment(row.value._id, 'thumb.jpg')
 			}));
