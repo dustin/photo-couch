@@ -1,5 +1,6 @@
 {
   "view" : "tag",
   "limit" : 50,
-  "key" : "uot"
+  "key" : "uot",
+  "reduce": false
 }

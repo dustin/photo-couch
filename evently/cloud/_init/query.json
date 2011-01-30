@@ -1,4 +1,5 @@
 {
-    "view": "tag-counts",
-    "group": "true"
+    "view": "tag",
+    "group": "true",
+    "reduce": "true"
 }

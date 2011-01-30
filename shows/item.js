@@ -7,7 +7,7 @@ function(doc, req) {
     doc.kw = kw.map(function(k) {
                         return {
                             name: k,
-                            link: path.list('tag', 'tag', {key: k})
+                            link: path.list('tag', 'tag', {key: k, reduce: false})
                         };
                     });
     doc.imageLink = path.attachment(doc._id, '800x600.jpg');

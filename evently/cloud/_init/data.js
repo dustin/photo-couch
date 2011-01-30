@@ -43,7 +43,8 @@ function(data) {
             tags.push({key: clumps[i][j].key,
                        count: clumps[i][j].value,
                        weight: i,
-                       link: path.list('tag', 'tag', {key: clumps[i][j].key})});
+                       link: path.list('tag', 'tag', {key: clumps[i][j].key,
+                                                      reduce: false})});
         }
     }
 
