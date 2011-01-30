@@ -19,7 +19,8 @@ function(head, req) {
                 ts: row.value.ts,
                 taken: row.value.taken,
 				show: path.show('item', row.value._id),
-                thumb: path.attachment(row.value._id, 'thumb.jpg')
+                thumb: path.attachment(row.value._id,
+                                       'thumb.' + row.value.extension)
 			}));
 		}
 		send(Mustache.to_html(templates.recent.tail, data));

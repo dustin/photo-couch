@@ -20,7 +20,8 @@ function(head, req) {
                 taken: row.value.taken,
                 description: row.value.description,
 				show: path.show('item', row.value._id),
-                thumb: path.attachment(row.value._id, 'thumb.jpg')
+                thumb: path.attachment(row.value._id,
+                                       'thumb.' + row.value.extension)
 			}));
 		}
 		send(Mustache.to_html(templates.tag.tail, data));

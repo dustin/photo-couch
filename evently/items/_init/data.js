@@ -22,7 +22,7 @@ function(data) {
       anItem.cleanDescr = anItem.taken + " - " + cleanString(anItem.descr) + " (" +
                        taglinks.join(", ") + ")";
       anItem.showLink = path.show('item', anItem._id);
-      anItem.imageLink = path.attachment(anItem._id, '800x600.jpg');
+      anItem.imageLink = path.attachment(anItem._id, '800x600.' + anItem.extension);
       items.push(anItem);
       all_items.splice(offset, 1);
   }
