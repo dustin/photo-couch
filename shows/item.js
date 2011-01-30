@@ -10,6 +10,7 @@ function(doc, req) {
                             link: path.list('tag', 'tag', {key: k, reduce: false})
                         };
                     });
+    doc.dbname    = req.info.db_name;
     doc.imageLink = path.attachment(doc._id,
                                     '800x600.' + doc.extension);
     return mustache.to_html(this.templates.item, doc);
