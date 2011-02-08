@@ -15,4 +15,7 @@ it all around.
 
 Awesome.
 
+Check out my [public photo album][public] for an example.
+
 [couchapp]: http://couchapp.org/
+[public]: http://dustinphoto.couchone.com/photo-public/_design/app/index.html
