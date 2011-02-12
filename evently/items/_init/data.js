@@ -1,13 +1,10 @@
 function(data) {
   var app = $$(this).app;
   var path = app.require("vendor/couchapp/lib/path").init(app.req);
+  var markdown = require("vendor/couchapp/lib/markdown");
 
   var all_items = data.rows.map(function(r) { return r.value; });
   var items = [];
-
-  function cleanString(s) {
-      return s.replace(/"/g, "&quot;").replace(/</g, "&lt;").replace(/([\r\n])/g, " ");
-  }
 
   /* Randomly grab 10 UOT pictures */
   while (all_items.length > 0 && items.length < 10) {
@@ -19,7 +16,7 @@ function(data) {
                        var l = path.list('tag', 'tag', {key: t, reduce: false});
                        return "<a href=" + l + ">" + t + "</a>";
                       });
-      anItem.cleanDescr = anItem.taken + " - " + cleanString(anItem.descr) + " (" +
+      anItem.cleanDescr = anItem.taken + " - " + markdown.encode(anItem.descr) + " (" +
                        taglinks.join(", ") + ")";
       anItem.showLink = path.show('item', anItem._id);
       anItem.imageLink = path.attachment(anItem._id, '800x600.' + anItem.extension);
