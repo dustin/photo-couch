@@ -16,8 +16,8 @@ function(data) {
                        var l = path.list('tag', 'tag', {key: t, reduce: false});
                        return "<a href=" + l + ">" + t + "</a>";
                       });
-      anItem.cleanDescr = anItem.taken + " - " + markdown.encode(anItem.descr) + " (" +
-                       taglinks.join(", ") + ")";
+      anItem.cleanDescr = anItem.taken + " - (" + taglinks.join(", ") + ")" +
+                              markdown.encode(anItem.descr);
       anItem.showLink = path.show('item', anItem._id);
       anItem.imageLink = path.attachment(anItem._id, '800x600.' + anItem.extension);
       items.push(anItem);
