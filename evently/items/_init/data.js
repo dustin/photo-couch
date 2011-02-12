@@ -1,7 +1,7 @@
 function(data) {
   var app = $$(this).app;
   var path = app.require("vendor/couchapp/lib/path").init(app.req);
-  var markdown = require("vendor/couchapp/lib/markdown");
+  var markdown = app.require("vendor/couchapp/lib/markdown");
 
   var all_items = data.rows.map(function(r) { return r.value; });
   var items = [];
