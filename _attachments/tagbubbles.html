@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Sallings Photo Album</title>
+    <link rel="stylesheet" href="style/screen.css" type="text/css">
+  </head>
+  <body>
+  </body>
+  <script src="vendor/couchapp/loader.js"></script>
+  <script type="text/javascript" src="js/protovis-r3.2.js"></script>
+
+  <script type="text/javascript" charset="utf-8">
+    $.couch.app(function(app) {
+    $(window).evently("tagbubble", app);
+    });
+  </script>
+</html>
