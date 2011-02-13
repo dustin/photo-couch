@@ -19,13 +19,13 @@ function(me, args) {
         .nodes(pv.dom(tags).root("tags").nodes())
         .size(function(d) { return d.nodeValue;})
         .spacing(1)
-        .order("descending")
+        .order("ascending")
         .node.add(pv.Dot)
             .event("click", function(d) {
                        var l = path.list('tag', 'tag', {key: d.nodeName, reduce: false});
                        window.location = l;
                    })
-            .fillStyle(pv.Colors.category20().by(function(d) { return d.nodeValue;}))
+            .fillStyle(pv.Colors.category19().by(function(d) { return d.nodeValue;}))
             .strokeStyle(function() { return this.fillStyle().darker();})
             .visible(function(d) { return d.parentNode;})
             .title(function(d) { return d.nodeName + ": " + format(d.nodeValue);})
