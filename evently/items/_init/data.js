@@ -11,7 +11,7 @@ function(data) {
   }
 
   /* Randomly grab 10 UOT pictures */
-  while (all_items.length > 0 && items.length < 10) {
+  while (all_items.length > 0 && items.length < 20) {
       var offset = Math.floor(Math.random() * all_items.length);
       var anItem = all_items[offset];
       var tags = anItem.keywords;
