@@ -1,5 +1,6 @@
 [
    ".*\\.swp$",
    ".*~$",
-   "^compass.*"
+   "^compass.*",
+   "^tools.*"
 ]
