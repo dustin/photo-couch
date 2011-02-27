@@ -14,15 +14,22 @@
         <li><a href="_list/comments/recent-comments?descending=true&amp;limit=50">Recent Comments</a></li>
         <li><a href="tagbubbles.html">Big Bubbly Tags</a></li>
       </ul>
+      <form method="get" action="#" id="searchform">
+        <div>
+          <input name="term" id="searchfield" />
+        </div>
+      </form>
     </div>
   </body>
-  <script src="vendor/couchapp/loader.js"></script>
+  <script type="text/javascript" src="vendor/couchapp/loader.js"></script>
   <script type="text/javascript" src="js/jquery.cycle.all.min.js"></script>
+  <script type="text/javascript" src="js/photo.js"></script>
 
   <script type="text/javascript" charset="utf-8">
     $.couch.app(function(app) {
       $("#items").evently("items", app);
       $("#cloudcontainer").evently("cloud", app);
+      field_blur_behavior('#searchfield', 'search');
     });
   </script>
 </html>
