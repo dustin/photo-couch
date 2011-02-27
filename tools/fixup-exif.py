@@ -6,7 +6,7 @@ import shutil
 
 import couchdb
 
-import EXIF
+import photoutils
 
 PICS_PER_BATCH = 100
 
@@ -33,18 +33,7 @@ while keepGoing:
                 shutil.copyfileobj(att, outfile)
                 att.close()
                 outfile.close()
-                exif = {}
-                with open(filename) as f:
-                    exifData = EXIF.process_file(f)
-                    for tag in exifData.keys():
-                        if tag not in ('JPEGThumbnail', 'TIFFThumbnail', 'Filename',
-                                       'EXIF MakerNote'):
-                            try:
-                                exif[unicode(tag)] = unicode(exifData[tag]).strip()
-                            except:
-                                print "Skipping", tag, "in", doc['_id']
-                                print repr(exifData[tag])
-                doc['exif'] = exif
+                doc['exif'] = photoutils.getExifData(filename)
                 # print doc
                 docs.append(doc)
             finally:
