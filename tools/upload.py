@@ -20,10 +20,14 @@ TNSIZE = 220, 146
 db = couchdb.Server('http://localhost:5984/')['photo']
 
 def takenDate(exif):
-    try:
-        return exif['EXIF DateTimeDigitized'].split(' ')[0].replace(':', '-')
-    except:
-        return time.strftime('%Y-%m-%d')
+    # Try to find a time in the exif data.
+    timefields = ['Image DateTime', 'EXIF DateTimeOriginal',
+                  'EXIF DateTimeDigitized']
+    for timefield in timefields:
+        if timefield in exif:
+            return exif[timefield].split(' ')[0].replace(':', '-')
+    # Otherwise return the current time
+    return time.strftime('%Y-%m-%d')
 
 def md5File(filename, block_size=65536):
     md5 = hashlib.md5()
