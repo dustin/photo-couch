@@ -33,16 +33,17 @@ while keepGoing:
                 shutil.copyfileobj(att, outfile)
                 att.close()
                 outfile.close()
+                exif = {}
                 with open(filename) as f:
-                    exif = {}
                     exifData = EXIF.process_file(f)
                     for tag in exifData.keys():
                         if tag not in ('JPEGThumbnail', 'TIFFThumbnail', 'Filename',
                                        'EXIF MakerNote'):
                             try:
-                                exif[tag] = str(exifData[tag]).strip()
+                                exif[unicode(tag)] = unicode(exifData[tag]).strip()
                             except:
                                 print "Skipping", tag, "in", doc['_id']
+                                print repr(exifData[tag])
                 doc['exif'] = exif
                 # print doc
                 docs.append(doc)
