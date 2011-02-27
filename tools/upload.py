@@ -76,8 +76,6 @@ def uploadFile(filename):
     doc['exif'] = exif
     ext = doc['extension']
 
-    print doc
-
     docid, rev = db.save(doc)
     saveAttachment(docid, filename, 'original.' + ext,
                    'image/' + i.format.lower())
