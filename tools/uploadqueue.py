@@ -2,7 +2,6 @@
 
 import os
 import sys
-import glob
 
 import upload
 
@@ -22,7 +21,7 @@ if __name__ == '__main__':
     incoming, processing, done = sys.argv[1:]
 
     os.chdir(incoming)
-    for basename in glob.glob("*.jpg"):
+    for basename in os.listdir('.'):
         try:
             process(basename, processing, done)
         except:
