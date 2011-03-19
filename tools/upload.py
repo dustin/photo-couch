@@ -7,7 +7,10 @@ import base64
 import hashlib
 import getpass
 
+import boto
 import couchdb
+
+from boto.s3.key import Key
 
 import photoutils
 
@@ -18,6 +21,9 @@ FORMATS = {'JPEG': 'jpg'}
 TNSIZE = 220, 146
 
 db = couchdb.Server('http://localhost:5984/')['photo']
+
+s3conn = boto.connect_s3()
+bucket = s3conn.get_bucket(os.getenv('PHOTO_BUCKET'))
 
 def takenDate(exif):
     # Try to find a time in the exif data.
@@ -38,6 +44,17 @@ def md5File(filename, block_size=65536):
                 break
             md5.update(data)
     return md5.hexdigest()
+
+def saveS3(docid, filename, extension, contentType):
+    fn = docid + '.' + extension
+    stored_name = 'original/' + fn[0:2] + '/' + fn
+
+    k = Key(bucket)
+    k.key = stored_name
+    k.content_type = contentType
+
+    print "Saving", k
+    k.set_contents_from_filename(filename)
 
 def saveAttachment(docid, filename, name, contentType):
     rev = db[docid]['_rev']
@@ -76,13 +93,16 @@ def uploadFile(filename):
     doc['exif'] = exif
     ext = doc['extension']
 
+    mimeType = 'image/' + i.format.lower()
+
+    # Save it to S3 before it hits the DB.  Mildly annoying when
+    # there's a failure, but I'd rather not think I've got photos I've
+    # got than vice versa.
+    saveS3(doc['_id'], filename, ext, mimeType)
+
     docid, rev = db.save(doc)
-    saveAttachment(docid, filename, 'original.' + ext,
-                   'image/' + i.format.lower())
-    saveScaled(docid, i, (800, 600), '800x600.' + ext,
-               'image/' + i.format.lower())
-    saveScaled(docid, i, TNSIZE, 'thumb.' + ext,
-               'image/' + i.format.lower())
+    saveScaled(docid, i, (800, 600), '800x600.' + ext, mimeType)
+    saveScaled(docid, i, TNSIZE, 'thumb.' + ext, mimeType)
 
 if __name__ == '__main__':
     for fn in sys.argv[1:]:
