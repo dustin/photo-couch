@@ -27,6 +27,6 @@ def getExifData(filename):
                 try:
                     exif[unicode(tag)] = unicode(exifData[tag]).strip()
                 except:
-                    print "Skipping", tag, "in", doc['_id']
+                    print "Skipping", tag, "in", filename
                     print repr(exifData[tag])
     return exif
