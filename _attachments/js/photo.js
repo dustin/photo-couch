@@ -21,3 +21,13 @@ function field_blur_behavior(field, def) {
 	$(f).bind('blur', blurBehavior);
     $(window).bind('unload', focusBehavior);
 }
+
+function photo_search(app, input) {
+    var path = app.require("vendor/couchapp/lib/path").init(app.req);
+
+    // console.log("Searching for " + input.val());
+    // $('#items').html("<h1>Search Results for \"" + input.val() + "\"</h1>");
+    // $('#items').append("<div id='search_results'>");
+
+    window.location = path.list('tag', 'tag', {key: input.val(), reduce: false});
+}

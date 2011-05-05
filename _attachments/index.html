@@ -30,6 +30,11 @@
       $("#items").evently("items", app);
       $("#cloudcontainer").evently("cloud", app);
       field_blur_behavior('#searchfield', 'search');
+
+      $('#searchform').submit(function() {
+        photo_search(app, $('#searchfield'));
+        return false;
+      });
     });
   </script>
 </html>
