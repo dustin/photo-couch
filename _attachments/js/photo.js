@@ -31,3 +31,31 @@ function photo_search(app, input) {
 
     window.location = path.list('tag', 'tag', {key: input.val(), reduce: false});
 }
+
+function photo_bulk_edit(app, form) {
+    console.log("Enabled bulk editor for app");
+    console.log(app);
+
+    $(form).submit(function() {
+        console.log("Updating a bunch of docs.");
+
+        for (var i = 0; i < docs.length; ++i) {
+            docs[i].keywords = $("#" + docs[i]._id + "-tags").val().split(" ");
+            docs[i].descr = $("#" + docs[i]._id + "-descr").val();
+            docs[i].cat = $("#" + docs[i]._id + "-cat").val();
+        }
+
+        app.db.bulkSave({docs: docs}, {
+            success: function() {
+                console.log("Yay!");
+            },
+            error: function(req, status, err) {
+                console.log(err);
+                alert(err);
+            }
+        });
+
+
+        return false;
+    });
+}

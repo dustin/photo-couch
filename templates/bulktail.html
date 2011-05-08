@@ -1,0 +1,13 @@
+  <input type="submit" value="Save"/>
+</form>
+
+<script src="../../js/prefix-loader.js"></script>
+<script type="text/javascript" charset="utf-8">
+  couchapp_prefix_load("../../");
+</script>
+<script src="../../js/photo.js"></script>
+<script type="text/javascript" charset="utf-8">
+  $.couch.app(function(app) {
+    photo_bulk_edit(app, $("#editform"));
+  });
+</script>

@@ -1,0 +1,12 @@
+<fieldset>
+  <legend>An Image from {{taken}}</legend>
+  <img src="{{thumb}}" alt="an image" />
+  Category:
+  <select name="{{id}}-cat" id="{{id}}-cat">
+    <option value="Private">Private</option>
+    <option value="Friends/Family">Friends/Family</option>
+    <option value="Public">Public</option>
+  </select><br/>
+  Tags:  <input name="{{id}}-tags" id="{{id}}-tags" value="{{tags}}" class="taglist" /><br/>
+  <textarea name="{{id}}-descr" id="{{id}}-descr" rows="6" cols="40">{{description}}</textarea>
+</fieldset>

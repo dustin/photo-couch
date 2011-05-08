@@ -11,7 +11,7 @@ ROTATOR = itertools.cycle("-\\|/-\\|/")
 conn = boto.connect_s3()
 bucket = conn.get_bucket('photo.west.spy.net')
 
-db = couchdb.Server('http://localhost:5984/')['photo']
+db = couchdb.Server('http://127.0.0.1:5984/')['photo']
 
 def is_a_photo(doc):
     return 'type' in doc and doc['type'] == 'photo'
