@@ -1,7 +1,6 @@
 function(head, req) {
 	// !json templates.head
 	// !json templates.recent
-	// !json templates.tail
 
 	provides("html", function() {
 		var row;
@@ -26,6 +25,6 @@ function(head, req) {
                                        'thumb.' + row.value.extension)
 			}));
 		}
-		send(Mustache.to_html(templates.tail, data));
+		send(Mustache.to_html(templates.recent.tail, data));
 	});
 }

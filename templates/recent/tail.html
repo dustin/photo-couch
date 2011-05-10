@@ -1,0 +1,17 @@
+</div>
+</body>
+
+<script type="text/javascript" src="../../js/prefix-loader.js"></script>
+<script type="text/javascript" src="../../js/photo.js"></script>
+
+<script type="text/javascript">
+  couchapp_prefix_load("../../");
+</script>
+
+<script type="text/javascript">
+  $.couch.app(function(app) {
+    photo_recent_feed(app, $("#thumblist"));
+  });
+</script>
+
+</html>

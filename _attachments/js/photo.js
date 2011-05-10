@@ -59,3 +59,30 @@ function photo_bulk_edit(app, form) {
         return false;
     });
 }
+
+function photo_recent_feed(app, target) {
+    var path = app.require("vendor/couchapp/lib/path").init(app.req);
+    var Mustache = app.require("vendor/couchapp/lib/mustache");
+
+    var tmpl = '<a href="{{show}}"><img src="{{thumb}}" alt="full image"' +
+        ' title="Added {{ts}}, taken {{taken}}"/></a>';
+
+    var changeFeed = app.db.changes(false, {"include_docs": true});
+    changeFeed.onChange(function(data) {
+
+        for (var i = 0; i < data.results.length; ++i) {
+            var row = data.results[0];
+            var thumbname = 'thumb.' + row.doc.extension;
+            if (row.doc['_attachments'] && row.doc._attachments[thumbname]) {
+                var tdata = {
+                    show: path.show('item', row.doc._id),
+                    thumb: path.attachment(row.doc._id, thumbname),
+                    ts: row.doc.ts,
+                    taken: row.doc.taken
+                };
+
+                target.prepend(Mustache.to_html(tmpl, tdata));
+            }
+        }
+    });
+}
