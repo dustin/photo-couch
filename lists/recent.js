@@ -27,10 +27,11 @@ function(head, req) {
                                        'thumb.' + row.value.extension)
             }));
         }
-        data.more = path.list('recent', 'recent-added', {skip: 1,
-                                                         startkey: lastKey,
-                                                         descending: true,
-                                                         limit: 50});
+        data.more = path.list('recent', req.path[req.path.length-1],
+                              {skip: 1,
+                               startkey: lastKey,
+                               descending: true,
+                               limit: 50});
         send(Mustache.to_html(templates.recent.tail, data));
     });
 }
