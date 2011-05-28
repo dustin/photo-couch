@@ -17,7 +17,7 @@ function(data) {
       var tags = anItem.keywords;
       tags.sort();
       var taglinks = tags.map(function(t) {
-                       var l = path.list('tag', 'tag', {key: t, include_docs: true, reduce: false});
+                       var l = path.list('tag', 'tag', {key: t, include_docs: true, reduce: false, limit: 50});
                        return "<a href=" + l + ">" + t + "</a>";
                       });
       anItem.cleanDescr = anItem.taken + " - (" + taglinks.join(", ") + ")" +

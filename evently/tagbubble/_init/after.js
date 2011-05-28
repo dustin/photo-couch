@@ -22,7 +22,10 @@ function(me, args) {
         .order("ascending")
         .node.add(pv.Dot)
             .event("click", function(d) {
-                var l = path.list('tag', 'tag', {key: d.nodeName, include_docs: true, reduce: false});
+                var l = path.list('tag', 'tag', {key: d.nodeName,
+                                                 limit: 50,
+                                                 include_docs: true,
+                                                 reduce: false});
                 window.location = l;
             })
             .fillStyle(pv.Colors.category19().by(function(d) { return d.nodeValue;}))

@@ -16,7 +16,9 @@ function(head, req) {
 
 		send(Mustache.to_html(templates.head, data));
 
+        var lastId = "";
 		while(row = getRow()) {
+            lastId = row.id;
 			send(Mustache.to_html(templates.tag.row, {
 				id: row.id,
                 ts: row.doc.ts,
@@ -27,6 +29,10 @@ function(head, req) {
                                        'thumb.' + row.doc.extension)
 			}));
 		}
+        var q = req.query;
+        q.startkey_docid = lastId;
+        q.skip = 1;
+        data.more = path.list('tag', 'tag', q);
 		send(Mustache.to_html(templates.tail, data));
 	});
 }

@@ -8,7 +8,10 @@ function(doc, req) {
     doc.kw = kw.map(function(k) {
                         return {
                             name: k,
-                            link: path.list('tag', 'tag', {key: k, reduce: false, include_docs: true})
+                            link: path.list('tag', 'tag', {key: k,
+                                                           limit: 50,
+                                                           reduce: false,
+                                                           include_docs: true})
                         };
                     });
     doc.dbname    = req.info.db_name;

@@ -45,6 +45,7 @@ function(data) {
                        weight: i,
                        link: path.list('tag', 'tag', {key: clumps[i][j].key,
                                                       reduce: false,
+                                                      limit: 50,
                                                       include_docs: true})});
         }
     }
