@@ -19,14 +19,14 @@ function(head, req) {
         var lastId = "";
         while( (row = getRow()) ) {
             lastKey = row.key;
-            lastId = row.value._id;
+            lastId = row.id;
             send(Mustache.to_html(templates.recent.row, {
-                id: row.value._id,
-                ts: row.value.ts,
-                taken: row.value.taken,
-                show: path.show('item', row.value._id),
-                thumb: path.attachment(row.value._id,
-                                       'thumb.' + row.value.extension)
+                id: row.id,
+                ts: row.doc.ts,
+                taken: row.doc.taken,
+                show: path.show('item', row.id),
+                thumb: path.attachment(row.id,
+                                       'thumb.' + row.doc.extension)
             }));
         }
         var q = req.query;

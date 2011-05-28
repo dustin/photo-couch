@@ -3,6 +3,6 @@ function(doc) {
         return;
     }
     for (var i = 0; i < doc.keywords.length; ++i) {
-        emit(doc.keywords[i], doc);
+        emit(doc.keywords[i], null);
     }
 }

@@ -3,7 +3,7 @@ function(data) {
   var path = app.require("vendor/couchapp/lib/path").init(app.req);
   var markdown = app.require("vendor/couchapp/lib/markdown");
 
-  var all_items = data.rows.map(function(r) { return r.value; });
+  var all_items = data.rows.map(function(r) { return r.doc; });
   var items = [];
 
   function cleanString(s) {

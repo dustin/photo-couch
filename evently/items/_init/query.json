@@ -1,6 +1,7 @@
 {
-  "view" : "tag",
-  "limit" : 50,
-  "key" : "uot",
-  "reduce": false
+    "view" : "tag",
+    "limit" : 50,
+    "key" : "uot",
+    "reduce": false,
+    "include_docs": true
 }

@@ -30,13 +30,13 @@ function(head, req) {
         for (var i = 0; i < docs.length; ++i) {
             row = docs[i];
             send(Mustache.to_html(templates.bulkedit, {
-				id: row._id,
+				id: row.id,
                 ts: row.ts,
                 taken: row.taken,
                 tags: row.keywords.join(" "),
                 description: row.descr,
-				show: path.show('item', row._id),
-                thumb: path.attachment(row._id,
+				show: path.show('item', row.id),
+                thumb: path.attachment(row.id,
                                        'thumb.' + row.extension)
 			}));
         }

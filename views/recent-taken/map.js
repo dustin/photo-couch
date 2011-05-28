@@ -1,5 +1,5 @@
 function(doc) {
-  if (doc.ts) {
+    if (doc.ts) {
     emit(doc.taken, doc);
-  }
-};
+    }
+}

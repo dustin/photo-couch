@@ -75,8 +75,8 @@ function photo_recent_feed(app, target) {
             var thumbname = 'thumb.' + row.doc.extension;
             if (row.doc['_attachments'] && row.doc._attachments[thumbname]) {
                 var tdata = {
-                    show: path.show('item', row.doc._id),
-                    thumb: path.attachment(row.doc._id, thumbname),
+                    show: path.show('item', row.id),
+                    thumb: path.attachment(row.id, thumbname),
                     ts: row.doc.ts,
                     taken: row.doc.taken
                 };

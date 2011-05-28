@@ -44,7 +44,8 @@ function(data) {
                        count: clumps[i][j].value,
                        weight: i,
                        link: path.list('tag', 'tag', {key: clumps[i][j].key,
-                                                      reduce: false})});
+                                                      reduce: false,
+                                                      include_docs: true})});
         }
     }
 
