@@ -29,7 +29,7 @@ function photo_search(app, input) {
     // $('#items').html("<h1>Search Results for \"" + input.val() + "\"</h1>");
     // $('#items').append("<div id='search_results'>");
 
-    window.location = path.list('tag', 'tag', {key: input.val(), reduce: false});
+    window.location = path.list('tag', 'tag', {key: input.val(), include_docs: true, reduce: false});
 }
 
 function photo_bulk_edit(app, form) {
