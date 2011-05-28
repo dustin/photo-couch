@@ -27,11 +27,10 @@ function(head, req) {
                                        'thumb.' + row.value.extension)
             }));
         }
-        data.more = path.list('recent', req.path[req.path.length-1],
-                              {skip: 1,
-                               startkey: lastKey,
-                               descending: true,
-                               limit: 50});
+        var q = req.query;
+        q.skip=1;
+        q.startkey = lastKey;
+        data.more = path.list('recent', req.path[req.path.length-1], q);
         send(Mustache.to_html(templates.recent.tail, data));
     });
 }
