@@ -16,8 +16,10 @@ function(head, req) {
         send(Mustache.to_html(templates.head, data));
 
         var lastKey = "";
+        var lastId = "";
         while( (row = getRow()) ) {
             lastKey = row.key;
+            lastId = row.value._id;
             send(Mustache.to_html(templates.recent.row, {
                 id: row.value._id,
                 ts: row.value.ts,
@@ -30,6 +32,7 @@ function(head, req) {
         var q = req.query;
         q.skip=1;
         q.startkey = lastKey;
+        q.lastId = lastId;
         data.more = path.list('recent', req.path[req.path.length-1], q);
         send(Mustache.to_html(templates.recent.tail, data));
     });
