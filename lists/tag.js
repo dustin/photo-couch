@@ -29,10 +29,15 @@ function(head, req) {
                                        'thumb.' + row.doc.extension)
 			}));
 		}
-        var q = req.query;
+        var q = JSON.parse(JSON.stringify(req.query));
         q.startkey_docid = lastId;
         q.skip = 1;
         data.more = path.list('tag', 'tag', q);
+
+        var eq = JSON.parse(JSON.stringify(req.query));
+        eq.include_docs = true;
+        data.edit = path.list('bulkedit', 'tag', eq);
+
 		send(Mustache.to_html(templates.tail, data));
 	});
 }
