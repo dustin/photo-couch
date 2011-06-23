@@ -50,7 +50,8 @@ function photo_bulk_edit(app, form) {
 
         app.db.bulkSave({docs: docs}, {
             success: function() {
-                console.log("Yay!");
+                var path = app.require("vendor/couchapp/lib/path").init(app.req);
+                window.location = path.asset('index.html');
             },
             error: function(req, status, err) {
                 console.log(err);
