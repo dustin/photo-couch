@@ -39,6 +39,10 @@ function photo_bulk_edit(app, form) {
     console.log("Enabled bulk editor for app");
     console.log(app);
 
+    for (var i = 0; i < docs.length; ++i) {
+        $("#" + docs[i]._id + "-cat").val(docs[i].cat);
+    }
+
     $(form).submit(function() {
         console.log("Updating a bunch of docs.");
 
