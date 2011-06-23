@@ -89,3 +89,14 @@ function photo_recent_feed(app, target) {
         }
     });
 }
+
+function photo_maybe_enable_admin_functions(app) {
+    $.couch.session({
+        success : function(r) {
+            var userCtx = r.userCtx;
+            if (userCtx.roles.indexOf("_admin") != -1) {
+                $(".admin").show();
+            }
+        }
+    });
+}

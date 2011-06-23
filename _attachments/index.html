@@ -8,11 +8,16 @@
     <div id="items"></div>
     <div id="sidebar">
       <div id="cloudcontainer"></div>
-      <ul id="nav">
+      <ul class="nav">
         <li><a href="_list/recent/recent-taken?descending=true&amp;include_docs=true&amp;limit=50">Recently Taken</a></li>
         <li><a href="_list/recent/recent-added?descending=true&amp;include_docs=true&amp;limit=50">Recently Added</a></li>
         <li><a href="_list/comments/recent-comments?descending=true&amp;include_docs=true&amp;limit=50">Recent Comments</a></li>
         <li><a href="tagbubbles.html">Big Bubbly Tags</a></li>
+      </ul>
+      <ul class="admin nav">
+        <li>
+          <a href="_list/bulkedit/tag?key=%22unprocessed%22&amp;include_docs=true&amp;reduce=false&amp;limit=50">Process New</a>
+        </li>
       </ul>
       <form method="get" action="#" id="searchform">
         <div>
@@ -35,6 +40,8 @@
         photo_search(app, $('#searchfield'));
         return false;
       });
+
+    photo_maybe_enable_admin_functions(app);
     });
   </script>
 </html>
