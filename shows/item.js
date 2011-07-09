@@ -17,6 +17,8 @@ function(doc, req) {
     doc.dbname    = req.info.db_name;
     doc.imageLink = path.attachment(doc._id,
                                     '800x600.' + doc.extension);
+    doc.origLink = 'http://bleu.west.spy.net/s3sign/original/' +
+        doc._id.substr(0, 2) + '/' + doc._id + '.' + doc.extension;
     doc.markeddown = markdown.encode(doc.descr);
     return mustache.to_html(this.templates.item, doc);
 }
