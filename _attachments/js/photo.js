@@ -28,9 +28,30 @@ function IndexCtrl($scope, $http) {
 }
 
 function TagCtrl($scope, $http, $routeParams) {
-    $http.get('_view/tag?reduce=false&limit=50&include_docs=true&key="' +
-              $routeParams.tag + '"').success(function(data) {
-                  $scope.photos = data.rows;
+    var tagNames = $routeParams.tag.split(/[+-]/);
+    var completed = 0;
+    var found = [];
+
+    _.each(tagNames, function(tag) {
+        $http.get('_view/tag?reduce=false&key="' +
+                  tag + '"').success(function(data) {
+                      var ids = _.pluck(data.rows, 'id');
+                      if (completed == 0) {
+                          found = ids;
+                      } else {
+                          found = _.intersection(found, ids);
+                      }
+                      completed++;
+                      if (completed == tagNames.length) {
+                          $http.post("../../_all_docs?include_docs=true",
+                                     {"keys": found}).success(function(data) {
+                                         var chosen = _.sortBy(_.pluck(data.rows,
+                                                                       'doc'), 'ts');
+                                         chosen.reverse();
+                                         $scope.photos = _.first(chosen, 50);
+                                     });
+                      }
+                  });
     });
 }
 
