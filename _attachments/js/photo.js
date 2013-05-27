@@ -180,8 +180,6 @@ function photo_tag_cloud(tags) {
         tags.splice(numToKeep, tags.length - numToKeep);
     }
 
-    console.log("clouding", tags);
-
     function sumOf(a) {
         var sum = 0;
         for (var i = 0; i < a.length; ++i) {
@@ -219,7 +217,6 @@ function photo_tag_cloud(tags) {
         }
     }
 
-    console.log("Sorting", tags);
     tags.sort(function(a, b) { return (a.key > b.key) ? 1 : -1 ; });
 
     return tags;
