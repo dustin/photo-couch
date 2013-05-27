@@ -1,49 +1,14 @@
 <!DOCTYPE html>
-<html>
+<html lang="en" ng-app="photo">
   <head>
     <title>Sallings Photo Album</title>
     <link rel="stylesheet" href="style/screen.css" type="text/css" />
   </head>
   <body>
-    <div id="items"></div>
-    <div id="sidebar">
-      <div id="cloudcontainer"></div>
-      <ul class="nav">
-        <li><a href="_list/recent/recent-taken?descending=true&amp;include_docs=true&amp;limit=50">Recently Taken</a></li>
-        <li><a href="_list/recent/recent-added?descending=true&amp;include_docs=true&amp;limit=50">Recently Added</a></li>
-        <li><a href="_list/comments/recent-comments?descending=true&amp;include_docs=true&amp;limit=50">Recent Comments</a></li>
-        <li><a href="tagbubbles.html">Big Bubbly Tags</a></li>
-      </ul>
-      <hr class="admin" />
-      <ul class="admin nav">
-        <li>
-          <a href="_list/bulkedit/tag?key=%22unprocessed%22&amp;include_docs=true&amp;reduce=false&amp;limit=50">Process New</a>
-        </li>
-      </ul>
-      <hr/>
-      <form method="get" action="#" id="searchform">
-        <div>
-          <input name="term" id="searchfield" />
-        </div>
-      </form>
-    </div>
+    <div ng-view></div>
   </body>
-  <script type="text/javascript" src="vendor/couchapp/loader.js"></script>
-  <script type="text/javascript" src="js/jquery.cycle.all.min.js"></script>
+  <script type="text/javascript" src="js/lodash.min.js"></script>
+  <script type="text/javascript" src="js/marked.js"></script>
+  <script type="text/javascript" src="js/angular.min.js"></script>
   <script type="text/javascript" src="js/photo.js"></script>
-
-  <script type="text/javascript" charset="utf-8">
-    $.couch.app(function(app) {
-      $("#items").evently("items", app);
-      $("#cloudcontainer").evently("cloud", app);
-      field_blur_behavior('#searchfield', 'search');
-
-      $('#searchform').submit(function() {
-        photo_search(app, $('#searchfield'));
-        return false;
-      });
-
-    photo_maybe_enable_admin_functions(app);
-    });
-  </script>
 </html>

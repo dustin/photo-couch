@@ -1,0 +1,6 @@
+<div id="thumblist">
+  <a ng-repeat="p in photos" href="#!/photo/{{p.id}}">
+    <img src="../../{{p.id}}/thumb.jpg"
+         alt="full image" title="taken {{p.doc.taken}}, added {{p.doc.ts}}">
+  </a>
+</div>

@@ -1,0 +1,31 @@
+<div id="showphoto">
+
+<p id="imagedisplay">
+ <img src="{{imageLink}}" alt="full image"/>
+</p>
+
+<div id="info">
+
+  <p>Tags:
+    <a ng-repeat="t in photo.keywords" href="#/tag/{{t}}">{{t}} </a>
+  </p>
+
+  <p>Size:  {{photo.width}}x{{photo.height}} (<a title="original" href="{{origLink}}">{{photo.size}} bytes</a>)</p>
+
+  <p>Taken: {{photo.taken}}, Added: {{photo.ts}} by {{photo.addedby}}</p>
+
+
+  <p>Category:  {{photo.cat}}</p>
+
+  <h2>Description</h2>
+  <p ng-bind-html-unsafe="photo.descr | markdownify"></p>
+
+  <div id="comments"></div>
+
+  <div id="futonlink">
+    <a href="/_utils/document.html?{{dbname}}/{{photo._id}}">(edit in futon)</a>
+  </div>
+</div>
+</div>
+
+</html>
