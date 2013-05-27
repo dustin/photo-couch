@@ -34,13 +34,24 @@ func mkUrl(path string, exp int64) string {
 		*bucket, s3Loc, path, url.QueryEscape(auth), exp, awsId)
 }
 
+func remote(r *http.Request) string {
+	rem := r.Header.Get("X-Forwarded-For")
+	if rem == "" {
+		rem = r.RemoteAddr
+	}
+	return rem
+}
+
 func redirect(w http.ResponseWriter, r *http.Request) {
 	exp := time.Now().Add(*expDuration).Unix()
+	log.Printf("Redirecting %v for %v", r.URL.Path, remote(r))
 	http.Redirect(w, r, mkUrl(r.URL.Path, exp), 302)
 }
 
 func main() {
 	flag.Parse()
+
+	log.SetFlags(0)
 
 	http.HandleFunc("/", redirect)
 	log.Fatal(http.ListenAndServe(":8123", nil))
