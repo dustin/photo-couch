@@ -44,7 +44,7 @@ function TagSearchCtrl($scope, $location) {
 }
 
 function RecentCtrl($scope, $http, $routeParams) {
-    $scope.skip = typeof($routeParams.skip) == "undefined" ? 0 : $routeParams.skip;
+    $scope.skip = typeof($routeParams.skip) == "undefined" ? 1 : +$routeParams.skip;
     $http.get("_view/recent-added?descending=true").success(function(data) {
         paginatedPhotos($scope, $http, _.pluck(data.rows, 'id'), 50,
                         function(i) {
