@@ -54,11 +54,9 @@ function RecentCtrl($scope, $http, $routeParams) {
 }
 
 function UnprocessedCtrl($scope, $http, $routeParams) {
-    $scope.skip = typeof($routeParams.skip) == "undefined" ? 0 : $routeParams.skip;
     $http.get('_view/tag?key="unprocessed"&include_docs=true&reduce=false&limit=50').success(function(data) {
         $scope.photos = _.pluck(data.rows, 'doc');
         _.each($scope.photos, function(x) { x.kwstring = x.keywords.join(" "); });
-        console.log("got", _.first($scope.photos, 10));
     });
 
     $scope.update = function(photo) {
