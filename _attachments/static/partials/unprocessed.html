@@ -1,7 +1,9 @@
 <div id="thumblist" ng-show="photos">
   <fieldset ng-repeat="p in photos">
     <legend>An Image from {{p.taken}}</legend>
-    <img src="../../{{p._id}}/thumb.jpg" alt="an image" />
+    <a href="#!/photo/{{p._id}}">
+      <img src="../../{{p._id}}/thumb.jpg" alt="an image" />
+    </a>
     Category:
     <select ng-model="p.cat">
       <option value="Private">Private</option>
