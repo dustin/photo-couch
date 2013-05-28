@@ -36,7 +36,7 @@ function IndexCtrl($scope, $http) {
 
 function TagSearchCtrl($scope, $location) {
     $scope.search = function() {
-        var l = decodeURIComponent($scope.query).replace(' ', '+');
+        var l = decodeURIComponent($scope.query).replace(/\s+/g, '+');
         window.location.hash = "#!/tag/" + l;
     };
 }
