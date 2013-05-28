@@ -7,6 +7,15 @@ angular.module('photo', []).
             return marked(string);
         };
     }).
+    filter('taglinks', function() {
+        return function(keywords) {
+            var linked = _.map(keywords, function(k) {
+                return '<a href="#!/tag/' + encodeURIComponent(k) + '">' +
+                    k + '</a>';
+            });
+            return linked.join(', ');
+        };
+    }).
     config(['$routeProvider', '$locationProvider',
             function($routeProvider, $locationProvider) {
                 $routeProvider.
@@ -33,6 +42,12 @@ function IndexCtrl($scope, $http) {
     $http.get("_view/tag?group_level=1").success(function(data) {
         var tags = _.map(data.rows, function(t) { return [t.key, t.value]; });
         $scope.cloud = photo_tag_cloud(tags);
+    });
+
+    $http.get('_view/tag?key="uot"&include_docs=true&reduce=false').success(function(data) {
+        $scope.uot = data.rows[_.random(data.rows.length)].doc;
+        $scope.uot.largeSrc = getLargeSrc($scope.uot._id, $scope.uot.extension);
+        $scope.uot.imageLink = getPhotoLink($scope.uot._id);
     });
 }
 
@@ -136,13 +151,21 @@ function TagCtrl($scope, $http, $routeParams) {
     });
 }
 
+function getLargeSrc(id, ext) {
+    return "../../" + id + "/800x600." + ext;
+}
+
+function getPhotoLink(id) {
+    return "#!/photo/" + id;
+}
+
 function PhotoCtrl($scope, $http, $routeParams) {
     var id = $routeParams.id;
     console.log("Loading", id);
     $http.get("../../" + id).success(function(data) {
         $scope.photo = data;
         $scope.kwstring = data.keywords.join(" ");
-        $scope.imageLink = "../../" + id + "/800x600.jpg";
+        $scope.imageLink = getLargeSrc(id, data.extension);
         $scope.origLink = 'http://bleu.west.spy.net/s3sign/original/' +
             data._id.substr(0, 2) + '/' + data._id + '.' + data.extension;
     });

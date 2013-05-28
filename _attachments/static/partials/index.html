@@ -1,3 +1,16 @@
+<div id="items" ng-show="uot">
+  <div id="slider" class="slideshow"
+       style="position: relative; overflow: hidden" >
+    <a href="{{uot.imageLink}}">
+      <img alt="uot image" src="{{uot.largeSrc}}" />
+    </a>
+  </div>
+  <div id="caption">
+    {{uot.taken}} - (<span ng-bind-html-unsafe="uot.keywords | taglinks"></span>)
+    <div ng-bind-html-unsafe="uot.descr | markdownify"></div>
+  </div>
+</div>
+
 <div id="sidebar">
   <div id="cloudcontainer">
     <a class="tag{{t.weight}}" title="{{t.count}}" href="#!/tag/{{t.key}}"
@@ -25,9 +38,3 @@
     </form>
   </div>
 </div>
-
-<h1>The Index</h1>
-
-<p>
-  Pictures.
-</p>
