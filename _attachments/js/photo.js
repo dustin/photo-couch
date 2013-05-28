@@ -19,7 +19,7 @@ angular.module('photo', []).
                     when("/tag/:tag", {templateUrl: 'static/partials/list.html',
                                        controller: 'TagCtrl'}).
                     when("/tag/:tag/:skip/",
-                         {templateUrl: 'static/partials/tag.html',
+                         {templateUrl: 'static/partials/list.html',
                           controller: 'TagCtrl'}).
                     when("/photo/:id", {templateUrl: 'static/partials/photo.html',
                                        controller: 'PhotoCtrl'}).
@@ -54,21 +54,22 @@ function RecentCtrl($scope, $http, $routeParams) {
 function paginatedPhotos($scope, $http, found, pagesize, linkfun) {
     $scope.total = found.length;
     $scope.pages = [];
-    for (var i = 0; i < found.length / pagesize; i++) {
-        $scope.pages.push({'page': i + 1,
+    for (var i = 1; i <= Math.ceil(found.length / pagesize); i++) {
+        $scope.pages.push({'page': i,
                            'link': linkfun(i)});
     }
-    var skip = $scope.skip * pagesize;
+    var skip = ($scope.skip-1) * pagesize;
     var toget = _.first(_.tail(found, skip), pagesize);
     $http.post("../../_all_docs?include_docs=true",
                {"keys": toget}).success(function(data) {
                    $scope.photos = _.pluck(data.rows, 'doc');
+                   $scope.pageNum = $scope.skip;
                });
 }
 
 function TagCtrl($scope, $http, $routeParams) {
     var tagNames = $routeParams.tag.split(/[+]/);
-    $scope.skip = typeof($routeParams.skip) == "undefined" ? 0 : $routeParams.skip;
+    $scope.skip = typeof($routeParams.skip) == "undefined" ? 0 : +$routeParams.skip;
     var pagesize = 50;
     var completed = 0;
     var found = [];
