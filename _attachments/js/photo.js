@@ -119,6 +119,7 @@ function PhotoCtrl($scope, $http, $routeParams) {
     console.log("Loading", id);
     $http.get("../../" + id).success(function(data) {
         $scope.photo = data;
+        $scope.kwstring = data.keywords.join(" ");
         $scope.imageLink = "../../" + id + "/800x600.jpg";
     });
 
@@ -126,6 +127,20 @@ function PhotoCtrl($scope, $http, $routeParams) {
               id + '"]&end_key=["' + id + '",{}]').success(function(data) {
                   $scope.comments = _.pluck(data.rows, 'value');
               });
+
+    $scope.update = function() {
+        $http.post("_update/photo/" + id,
+                   "cat=" + encodeURIComponent($scope.photo.cat) +
+                   "&descr=" + encodeURIComponent($scope.photo.descr) +
+                   "&taken=" + encodeURIComponent($scope.photo.taken) +
+                   "&keywords=" + encodeURIComponent($scope.kwstring),
+                   {headers: {"Content-Type": "application/x-www-form-urlencoded"}}).
+            success(function(e) {
+                $scope.photo.keywords = $scope.kwstring.split(/\s+/);
+                $scope.editing = false;
+            });
+
+    };
 }
 
 function field_blur_behavior(field, def) {

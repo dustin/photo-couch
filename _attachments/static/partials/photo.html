@@ -6,19 +6,32 @@
 
 <div id="info">
 
-  <p>Tags:
+  <p ng-hide="editing" ng-click="editing = true">Tags:
     <a ng-repeat="t in photo.keywords" href="#!/tag/{{t}}">{{t}} </a>
   </p>
+  <p ng-show="editing">Tags: <input ng-model="kwstring" /></p>
 
   <p>Size:  {{photo.width}}x{{photo.height}} (<a title="original" href="{{origLink}}">{{photo.size}} bytes</a>)</p>
 
-  <p>Taken: {{photo.taken}}, Added: {{photo.ts}} by {{photo.addedby}}</p>
+  <p ng-click="editing=true">
+    Taken: <span ng-hide="editing">{{photo.taken}},</span>
+    <span ng-show="editing"> <input ng-model="photo.taken" /></span>
+    Added: {{photo.ts}} by {{photo.addedby}}
+  </p>
 
-
-  <p>Category:  {{photo.cat}}</p>
+  <p ng-click="editing = true" ng-hide="editing">Category:  {{photo.cat}}</p>
+  <select ng-show="editing" ng-model="photo.cat">
+    <option value="Private">Private</option>
+    <option value="Friends/Family">Friends/Family</option>
+    <option value="Public">Public</option>
+  </select>
 
   <h2>Description</h2>
-  <p ng-bind-html-unsafe="photo.descr | markdownify"></p>
+  <p ng-hide="editing" ng-click="editing = true" ng-bind-html-unsafe="photo.descr | markdownify"></p>
+  <textarea ng-click="editing = true" ng-show="editing" ng-model="photo.descr"></textarea>
+
+  <button ng-show="editing" ng-click="update()">Save</button>
+  <button ng-show="editing" ng-click="editing = false">Cancel</button>
 
   <div id="comments" ng-hide="comments"><h2>No comments</h2></div>
   <div id="comments" ng-show="comments">
