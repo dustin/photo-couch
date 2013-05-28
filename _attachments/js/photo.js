@@ -67,14 +67,21 @@ function paginatedPhotos($scope, $http, found, pagesize, linkfun) {
 }
 
 function TagCtrl($scope, $http, $routeParams) {
-    var tagNames = $routeParams.tag.split(/[+-]/);
+    var tagNames = $routeParams.tag.split(/[+]/);
     $scope.skip = typeof($routeParams.skip) == "undefined" ? 0 : $routeParams.skip;
     var pagesize = 50;
     var completed = 0;
     var found = [];
     var timestamps = {};
+    var negatives = [];
+    var foundOne = false;
 
     _.each(tagNames, function(tag) {
+        var isNeg = false;
+        if (tag[0] == '-') {
+            isNeg = true;
+            tag = tag.substr(1);
+        }
         $http.get('_view/tag?reduce=false&key="' +
                   tag + '"').success(function(data) {
                       var ids = [];
@@ -82,11 +89,18 @@ function TagCtrl($scope, $http, $routeParams) {
                           ids.push(r.id);
                           timestamps[r.id] = r.value;
                       });
-                      found = (completed>0) ? _.intersection(found, ids) : ids;
+                      if (isNeg) {
+                          negatives = _.union(negatives, ids);
+                      } else {
+                          found = foundOne ? _.intersection(found, ids) : ids;
+                          foundOne = true;
+                      }
                       console.log("Found", ids.length, "for", tag,
                                   "now have", found.length);
                       completed++;
                       if (completed == tagNames.length) {
+                          console.log("Excluding", negatives.length, "from", found.length);
+                          found = _.difference(found, negatives);
                           found.sort(function(a, b) {
                               return timestamps[a] > timestamps[b] ? -1 : 1;
                           });
