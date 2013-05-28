@@ -1,0 +1,17 @@
+<div id="thumblist" ng-show="photos">
+  <fieldset ng-repeat="p in photos">
+    <legend>An Image from {{p.taken}}</legend>
+    <img src="../../{{p._id}}/thumb.jpg" alt="an image" />
+    Category:
+    <select ng-model="p.cat">
+      <option value="Private">Private</option>
+      <option value="Friends/Family">Friends/Family</option>
+      <option value="Public">Public</option>
+    </select><br/>
+    Taken <input ng-model="p.taken" /><br/>
+    Tags:  <input ng-model="p.kwstring" /><br/>
+    <textarea ng-model="p.descr" rows="6" cols="40">Uploaded image.</textarea>
+    <br/>
+    <button ng-click="update(p)">Save</button>
+  </fieldset>
+</div>
