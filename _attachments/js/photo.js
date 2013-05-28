@@ -145,6 +145,8 @@ function PhotoCtrl($scope, $http, $routeParams) {
         $scope.photo = data;
         $scope.kwstring = data.keywords.join(" ");
         $scope.imageLink = "../../" + id + "/800x600.jpg";
+        $scope.origLink = 'http://bleu.west.spy.net/s3sign/original/' +
+            data._id.substr(0, 2) + '/' + data._id + '.' + data.extension;
     });
 
     $http.get('_view/comments?start_key=["' +
