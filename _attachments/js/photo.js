@@ -92,7 +92,7 @@ function paginatedPhotos($scope, $http, found, pagesize, linkfun) {
 
 function TagCtrl($scope, $http, $routeParams) {
     var tagNames = $routeParams.tag.split(/[+]/);
-    $scope.skip = typeof($routeParams.skip) == "undefined" ? 0 : +$routeParams.skip;
+    $scope.skip = typeof($routeParams.skip) == "undefined" ? 1 : +$routeParams.skip;
     var pagesize = 50;
     var completed = 0;
     var found = [];
