@@ -4,3 +4,12 @@
          alt="full image" title="taken {{p.taken}}, added {{p.ts}}">
   </a>
 </div>
+
+<div id="footer" ng-show="total">
+  <div>
+    <a ng-repeat="p in pages" href="{{p.link}}">{{p.page}} </a>
+  </div>
+  <div>
+    Found {{total}} images, on page {{skip+1}}.
+  </div>
+</div>

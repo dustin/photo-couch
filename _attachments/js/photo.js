@@ -14,6 +14,9 @@ angular.module('photo', []).
                                      controller: 'IndexCtrl'}).
                     when("/tag/:tag", {templateUrl: 'static/partials/tag.html',
                                        controller: 'TagCtrl'}).
+                    when("/tag/:tag/:skip/",
+                         {templateUrl: 'static/partials/tag.html',
+                          controller: 'TagCtrl'}).
                     when("/photo/:id", {templateUrl: 'static/partials/photo.html',
                                        controller: 'PhotoCtrl'}).
                     otherwise({redirectTo: '/index/'});
@@ -29,6 +32,8 @@ function IndexCtrl($scope, $http) {
 
 function TagCtrl($scope, $http, $routeParams) {
     var tagNames = $routeParams.tag.split(/[+-]/);
+    $scope.skip = typeof($routeParams.skip) == "undefined" ? 0 : $routeParams.skip;
+    var pagesize = 50;
     var completed = 0;
     var found = [];
     var timestamps = {};
@@ -41,13 +46,23 @@ function TagCtrl($scope, $http, $routeParams) {
                           ids.push(r.id);
                           timestamps[r.id] = r.value;
                       });
-                      found = (completed>1) ? _.intersection(found, ids) : ids;
+                      found = (completed>0) ? _.intersection(found, ids) : ids;
+                      console.log("Found", ids.length, "for", tag,
+                                  "now have", found.length);
                       completed++;
                       if (completed == tagNames.length) {
+                          $scope.total = found.length;
+                          $scope.pages = [];
+                          for (var i = 0; i < found.length / pagesize; i++) {
+                              $scope.pages.push({'page': i + 1,
+                                                 'link': '#!/tag/' +
+                                                 $routeParams.tag + '/' + i + '/'});
+                          }
                           found.sort(function(a, b) {
                               return timestamps[a] > timestamps[b] ? -1 : 1;
                           });
-                          var toget = _.first(found, 50);
+                          var skip = $scope.skip * pagesize;
+                          var toget = _.first(_.tail(found, skip), pagesize);
                           $http.post("../../_all_docs?include_docs=true",
                                      {"keys": toget}).success(function(data) {
                                          $scope.photos = _.pluck(data.rows, 'doc');
