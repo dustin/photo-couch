@@ -7,7 +7,7 @@
 <div id="info">
 
   <p ng-hide="editing" ng-click="editing = true">Tags:
-    <a ng-repeat="t in photo.keywords" href="#!/tag/{{t}}">{{t}} </a>
+    <span ng-bind-html-unsafe="photo.keywords | taglinks"></span>
   </p>
   <p ng-show="editing">Tags: <input ng-model="kwstring" /></p>
 
