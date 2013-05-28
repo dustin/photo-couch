@@ -16,6 +16,11 @@ angular.module('photo', []).
             return linked.join(', ');
         };
     }).
+    filter('orient', function() {
+        return function(photo) {
+            return imgCss(photo.exif);
+        };
+    }).
     config(['$routeProvider', '$locationProvider',
             function($routeProvider, $locationProvider) {
                 $routeProvider.
@@ -172,6 +177,17 @@ function getLargeSrc(id, ext) {
 
 function getPhotoLink(id) {
     return "#!/photo/" + id;
+}
+
+function imgCss(exif) {
+    var rv = "";
+    var rot = (exif && exif["Image Orientation"]) || "";
+    if (rot) {
+        if (rot.match(/90 CW/)) {
+            rv = "rot90";
+        }
+    }
+    return rv;
 }
 
 function PhotoCtrl($scope, $http, $routeParams) {
