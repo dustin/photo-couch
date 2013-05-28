@@ -30,6 +30,13 @@ function IndexCtrl($scope, $http) {
     });
 }
 
+function TagSearchCtrl($scope, $location) {
+    $scope.search = function() {
+        var l = decodeURIComponent($scope.query).replace(' ', '+');
+        window.location.hash = "#!/tag/" + l;
+    };
+}
+
 function TagCtrl($scope, $http, $routeParams) {
     var tagNames = $routeParams.tag.split(/[+-]/);
     $scope.skip = typeof($routeParams.skip) == "undefined" ? 0 : $routeParams.skip;

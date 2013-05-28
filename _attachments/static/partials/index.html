@@ -3,10 +3,21 @@
     <a class="tag{{t.weight}}" title="{{t.count}}" href="#!/tag/{{t.key}}"
        ng-repeat="t in cloud">{{t.key}} </a>
   </div>
+
+  <hr />
+
+  <div ng-controller="TagSearchCtrl">
+    <form ng-submit="search()">
+      <div>
+        <input name="term" id="searchfield" ng-model="query"
+               class="search-query" placeholder="Search" />
+      </div>
+    </form>
+  </div>
 </div>
 
 <h1>The Index</h1>
 
 <p>
-  Pictures {{hello}}.
+  Pictures.
 </p>
