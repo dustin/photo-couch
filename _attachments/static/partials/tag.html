@@ -1,4 +1,4 @@
-<div id="thumblist">
+<div id="thumblist" ng-show="photos">
   <a ng-repeat="p in photos" href="#!/photo/{{p._id}}">
     <img src="../../{{p._id}}/thumb.{{p.extension}}"
          alt="full image" title="taken {{p.taken}}, added {{p.ts}}">

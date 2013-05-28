@@ -31,24 +31,26 @@ function TagCtrl($scope, $http, $routeParams) {
     var tagNames = $routeParams.tag.split(/[+-]/);
     var completed = 0;
     var found = [];
+    var timestamps = {};
 
     _.each(tagNames, function(tag) {
         $http.get('_view/tag?reduce=false&key="' +
                   tag + '"').success(function(data) {
-                      var ids = _.pluck(data.rows, 'id');
-                      if (completed == 0) {
-                          found = ids;
-                      } else {
-                          found = _.intersection(found, ids);
-                      }
+                      var ids = [];
+                      _.each(data.rows, function(r) {
+                          ids.push(r.id);
+                          timestamps[r.id] = r.value;
+                      });
+                      found = (completed>1) ? _.intersection(found, ids) : ids;
                       completed++;
                       if (completed == tagNames.length) {
+                          found.sort(function(a, b) {
+                              return timestamps[a] > timestamps[b] ? -1 : 1;
+                          });
+                          var toget = _.first(found, 50);
                           $http.post("../../_all_docs?include_docs=true",
-                                     {"keys": found}).success(function(data) {
-                                         var chosen = _.sortBy(_.pluck(data.rows,
-                                                                       'doc'), 'ts');
-                                         chosen.reverse();
-                                         $scope.photos = _.first(chosen, 50);
+                                     {"keys": toget}).success(function(data) {
+                                         $scope.photos = _.pluck(data.rows, 'doc');
                                      });
                       }
                   });
