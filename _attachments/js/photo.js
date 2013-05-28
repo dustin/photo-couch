@@ -23,6 +23,11 @@ angular.module('photo', []).
                                      controller: 'IndexCtrl'}).
                     when("/unprocessed/", {templateUrl: 'static/partials/unprocessed.html',
                                       controller: 'UnprocessedCtrl'}).
+                    when("/recent-taken/", {templateUrl: 'static/partials/list.html',
+                                      controller: 'RecentTakenCtrl'}).
+                    when("/recent-taken/:skip/",
+                         {templateUrl: 'static/partials/list.html',
+                          controller: 'RecentTakenCtrl'}).
                     when("/recent/", {templateUrl: 'static/partials/list.html',
                                       controller: 'RecentCtrl'}).
                     when("/recent/:skip/", {templateUrl: 'static/partials/list.html',
@@ -61,6 +66,16 @@ function TagSearchCtrl($scope, $location) {
 function RecentCtrl($scope, $http, $routeParams) {
     $scope.skip = typeof($routeParams.skip) == "undefined" ? 1 : +$routeParams.skip;
     $http.get("_view/recent-added?descending=true").success(function(data) {
+        paginatedPhotos($scope, $http, _.pluck(data.rows, 'id'), 50,
+                        function(i) {
+                            return "#!/recent/" + i + "/";
+                        });
+    });
+}
+
+function RecentTakenCtrl($scope, $http, $routeParams) {
+    $scope.skip = typeof($routeParams.skip) == "undefined" ? 1 : +$routeParams.skip;
+    $http.get("_view/recent-taken?descending=true").success(function(data) {
         paginatedPhotos($scope, $http, _.pluck(data.rows, 'id'), 50,
                         function(i) {
                             return "#!/recent/" + i + "/";
