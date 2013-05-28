@@ -12,7 +12,11 @@ angular.module('photo', []).
                 $routeProvider.
                     when('/index/', {templateUrl: 'static/partials/index.html',
                                      controller: 'IndexCtrl'}).
-                    when("/tag/:tag", {templateUrl: 'static/partials/tag.html',
+                    when("/recent/", {templateUrl: 'static/partials/list.html',
+                                      controller: 'RecentCtrl'}).
+                    when("/recent/:skip/", {templateUrl: 'static/partials/list.html',
+                                            controller: 'RecentCtrl'}).
+                    when("/tag/:tag", {templateUrl: 'static/partials/list.html',
                                        controller: 'TagCtrl'}).
                     when("/tag/:tag/:skip/",
                          {templateUrl: 'static/partials/tag.html',
@@ -37,6 +41,31 @@ function TagSearchCtrl($scope, $location) {
     };
 }
 
+function RecentCtrl($scope, $http, $routeParams) {
+    $scope.skip = typeof($routeParams.skip) == "undefined" ? 0 : $routeParams.skip;
+    $http.get("_view/recent-added?descending=true").success(function(data) {
+        paginatedPhotos($scope, $http, _.pluck(data.rows, 'id'), 50,
+                        function(i) {
+                            return "#!/recent/" + i + "/";
+                        });
+    });
+}
+
+function paginatedPhotos($scope, $http, found, pagesize, linkfun) {
+    $scope.total = found.length;
+    $scope.pages = [];
+    for (var i = 0; i < found.length / pagesize; i++) {
+        $scope.pages.push({'page': i + 1,
+                           'link': linkfun(i)});
+    }
+    var skip = $scope.skip * pagesize;
+    var toget = _.first(_.tail(found, skip), pagesize);
+    $http.post("../../_all_docs?include_docs=true",
+               {"keys": toget}).success(function(data) {
+                   $scope.photos = _.pluck(data.rows, 'doc');
+               });
+}
+
 function TagCtrl($scope, $http, $routeParams) {
     var tagNames = $routeParams.tag.split(/[+-]/);
     $scope.skip = typeof($routeParams.skip) == "undefined" ? 0 : $routeParams.skip;
@@ -58,22 +87,14 @@ function TagCtrl($scope, $http, $routeParams) {
                                   "now have", found.length);
                       completed++;
                       if (completed == tagNames.length) {
-                          $scope.total = found.length;
-                          $scope.pages = [];
-                          for (var i = 0; i < found.length / pagesize; i++) {
-                              $scope.pages.push({'page': i + 1,
-                                                 'link': '#!/tag/' +
-                                                 $routeParams.tag + '/' + i + '/'});
-                          }
                           found.sort(function(a, b) {
                               return timestamps[a] > timestamps[b] ? -1 : 1;
                           });
-                          var skip = $scope.skip * pagesize;
-                          var toget = _.first(_.tail(found, skip), pagesize);
-                          $http.post("../../_all_docs?include_docs=true",
-                                     {"keys": toget}).success(function(data) {
-                                         $scope.photos = _.pluck(data.rows, 'doc');
-                                     });
+                          paginatedPhotos($scope, $http, found, pagesize,
+                                         function(i) {
+                                             return '#!/tag/' +
+                                                 $routeParams.tag + '/' + i + '/';
+                                         });
                       }
                   });
     });
