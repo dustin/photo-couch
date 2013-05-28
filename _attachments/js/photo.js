@@ -64,7 +64,11 @@ function PhotoCtrl($scope, $http, $routeParams) {
         $scope.photo = data;
         $scope.imageLink = "../../" + id + "/800x600.jpg";
     });
-    // load comments
+
+    $http.get('_view/comments?start_key=["' +
+              id + '"]&end_key=["' + id + '",{}]').success(function(data) {
+                  $scope.comments = _.pluck(data.rows, 'value');
+              });
 }
 
 function field_blur_behavior(field, def) {

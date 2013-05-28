@@ -20,7 +20,15 @@
   <h2>Description</h2>
   <p ng-bind-html-unsafe="photo.descr | markdownify"></p>
 
-  <div id="comments"></div>
+  <div id="comments" ng-hide="comments"><h2>No comments</h2></div>
+  <div id="comments" ng-show="comments">
+    <h2>Comments</h2>
+
+    <div ng-repeat="c in comments">
+      <p>{{c.realname}} said on {{c.ts}}:</p>
+      <blockquote ng-bind-html-unsafe="c.note | markdownify"></blockquote>
+    </div>
+  </div>
 
   <div id="futonlink">
     <a href="/_utils/document.html?{{dbname}}/{{photo._id}}">(edit in futon)</a>
