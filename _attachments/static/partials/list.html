@@ -7,7 +7,10 @@
 
 <div id="footer" ng-show="total">
   <div>
-    <a ng-repeat="p in pages" href="{{p.link}}">{{p.page}} </a>
+    <span ng-repeat="p in pages">
+      <a ng-hide="p.page == pageNum" href="{{p.link}}">{{p.page}}</a>
+      <em ng-show="p.page == pageNum" class="currentPage">{{p.page}}</em>
+    </span>
   </div>
   <div>
     Found {{total}} images, on page {{pageNum}}.
