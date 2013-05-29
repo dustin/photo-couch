@@ -102,7 +102,7 @@ function UnprocessedCtrl($scope, $http, $routeParams) {
                    "&keywords=" + encodeURIComponent(photo.kwstring),
                    {headers: {"Content-Type": "application/x-www-form-urlencoded"}}).
             success(function(e) {
-                // Something
+                photo.changed = false;
             });
     };
 }
