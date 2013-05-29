@@ -2,7 +2,8 @@
   <fieldset ng-repeat="p in photos">
     <legend>An Image from {{p.taken}}</legend>
     <a href="#!/photo/{{p._id}}">
-      <img src="../../{{p._id}}/thumb.jpg" alt="an image" />
+      <img src="../../{{p._id}}/thumb.jpg" alt="an image"
+           class="{{p | orient }}"/>
     </a>
     Category:
     <select ng-model="p.cat">
