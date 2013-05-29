@@ -27,21 +27,6 @@
     <option value="Public">Public</option>
   </select>
 
-  <div ng-show="photo.exif">
-    <h2>EXIF Metadata</h2>
-    <p ng-click="showmeta = true" ng-hide="showmeta">...</p>
-    <table class="exif" ng-show="showmeta" ng-click="showmeta = false">
-      <thead>
-        <tr><th>Key</th><th>Value</th></tr>
-      </thead>
-      <tbody>
-        <tr ng-repeat="(k,v) in photo.exif">
-          <td>{{k}}</td><td>{{v}}</td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
-
   <h2>Description</h2>
   <p ng-hide="editing" ng-click="editing = true" ng-bind-html-unsafe="photo.descr | markdownify"></p>
   <textarea ng-click="editing = true" ng-show="editing" ng-model="photo.descr"></textarea>
@@ -57,6 +42,21 @@
       <p>{{c.realname}} said on {{c.ts}}:</p>
       <blockquote ng-bind-html-unsafe="c.note | markdownify"></blockquote>
     </div>
+  </div>
+
+  <div ng-show="photo.exif">
+    <h2>EXIF Metadata</h2>
+    <p ng-click="showmeta = true" ng-hide="showmeta">...</p>
+    <table class="exif" ng-show="showmeta" ng-click="showmeta = false">
+      <thead>
+        <tr><th>Key</th><th>Value</th></tr>
+      </thead>
+      <tbody>
+        <tr ng-repeat="(k,v) in photo.exif">
+          <td>{{k}}</td><td>{{v}}</td>
+        </tr>
+      </tbody>
+    </table>
   </div>
 
   <div id="futonlink">
