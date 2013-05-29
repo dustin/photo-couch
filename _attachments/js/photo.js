@@ -182,10 +182,8 @@ function getPhotoLink(id) {
 function imgCss(exif) {
     var rv = "";
     var rot = (exif && exif["Image Orientation"]) || "";
-    if (rot) {
-        if (rot.match(/90 CW/)) {
-            rv = "rot90";
-        }
+    if (rot.match(/90 CW/)) {
+        rv = "rot90";
     }
     return rv;
 }
