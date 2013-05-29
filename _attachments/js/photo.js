@@ -94,6 +94,21 @@ function UnprocessedCtrl($scope, $http, $routeParams) {
         _.each($scope.photos, function(x) { x.kwstring = x.keywords.join(" "); });
     });
 
+    $scope.numChanges = 0;
+
+    $scope.updateAll = function() {
+        _.each($scope.photos, function(p) {
+            if (p.changed) {
+                $scope.update(p);
+            }
+        });
+    };
+
+    $scope.markChanged = function(photo) {
+        photo.changed = true;
+        $scope.numChanges++;
+    };
+
     $scope.update = function(photo) {
         $http.post("_update/photo/" + photo._id,
                    "cat=" + encodeURIComponent(photo.cat) +
@@ -103,6 +118,7 @@ function UnprocessedCtrl($scope, $http, $routeParams) {
                    {headers: {"Content-Type": "application/x-www-form-urlencoded"}}).
             success(function(e) {
                 photo.changed = false;
+                $scope.numChanges--;
             });
     };
 }

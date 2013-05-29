@@ -6,18 +6,26 @@
            class="{{p | orient }}"/>
     </a>
     Category:
-    <select ng-model="p.cat" ng-change="p.changed = true">
+    <select ng-model="p.cat" ng-change="markChanged(p)">
       <option value="Private">Private</option>
       <option value="Friends/Family">Friends/Family</option>
       <option value="Public">Public</option>
     </select><br/>
-    Taken <input ng-model="p.taken" ng-change="p.changed = true" /><br/>
-    Tags:  <input ng-model="p.kwstring" ng-change="p.changed = true" /><br/>
-    <textarea ng-change="p.changed = true"
+    Taken <input ng-model="p.taken" ng-change="markChanged(p)" /><br/>
+    Tags:  <input ng-model="p.kwstring" ng-change="markChanged(p)" /><br/>
+    <textarea ng-change="markChanged(p)"
               ng-model="p.descr" rows="6" cols="40">Uploaded image.</textarea>
     <br/>
     <button class="changed{{p.changed}}"
             ng-disabled="!p.changed"
             ng-click="update(p)">Save</button>
   </fieldset>
+</div>
+
+<hr />
+
+<div>
+  <button class="changed{{numChanges > 0}}"
+          ng-disabled="numChanges == 0"
+          ng-click="updateAll()">Update {{numChanges}}</button>
 </div>
