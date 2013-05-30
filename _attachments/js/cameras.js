@@ -1,129 +1,127 @@
 var camerasViewURL = '_view/cameras?group_level=2';
 
+var w = window.innerWidth,
+    h = window.innerHeight,
+    x = d3.scale.linear().range([0, w]),
+    y = d3.scale.linear().range([0, h]),
+    color = d3.scale.category20c(),
+    root,
+    node;
+
+var treemap = d3.layout.treemap()
+    .round(false)
+    .size([w, h])
+    .sticky(true)
+    .value(function(d) { return d.size; });
+
+var svg = d3.select("body").append("div")
+    .attr("class", "chart")
+    .style("width", w + "px")
+    .style("height", h + "px")
+    .append("svg:svg")
+    .attr("width", w)
+    .attr("height", h)
+    .append("svg:g")
+    .attr("transform", "translate(.5,.5)");
+
+d3.json(camerasViewURL, function(data) {
+    var cameras = [ ];
+
+    var ob = {
+        "name": toTitleCase(data.rows[0].key[0]),
+        "children": []
+    };
+    cameras.push(ob);
+    for (var i = 0; i < data.rows.length; i++) {
+        var r = data.rows[i];
+        if (r.key[0] != ob.name) {
+            ob = {
+                "name": toTitleCase(r.key[0]),
+                "children": []
+            };
+            cameras.push(ob);
+        }
+        ob.children.push({"name": toTitleCase(r.key[1]), "size": r.value.count});
+    };
+
+    root = {
+        "name": "cameras",
+        "children": cameras
+    };
+
+    node = root;
+
+    var nodes = treemap.nodes(root)
+        .filter(function(d) { return !d.children; });
+
+    var cell = svg.selectAll("g")
+      .data(nodes)
+        .enter().append("svg:g")
+        .attr("class", "cell")
+        .attr("transform", function(d) {
+            return "translate(" + d.x + "," + d.y + ")";
+        })
+        .on("click", function(d) {
+            return zoom(node == d.parent ? root : d.parent);
+        });
+
+    cell.append("svg:rect")
+        .attr("width", function(d) { return d.dx - 1; })
+        .attr("height", function(d) { return d.dy - 1; })
+        .style("fill", function(d) { return color(d.parent.name); });
+
+    cell.append("svg:text")
+        .attr("x", function(d) { return d.dx / 2; })
+        .attr("y", function(d) { return d.dy / 2; })
+        .attr("dy", ".35em")
+        .attr("text-anchor", "middle")
+        .text(function(d) { return d.name; })
+        .style("opacity", function(d) {
+            d.w = this.getComputedTextLength();
+            return d.dx > d.w ? 1 : 0;
+        });
+
+    d3.select(window).on("click", function() { zoom(root); });
+
+    d3.select("select").on("change", function() {
+        treemap.value(this.value == "size" ? size : count).nodes(root);
+        zoom(node);
+    });
+});
+
+function size(d) {
+    return d.size;
+}
+
+function count(d) {
+    return 1;
+}
+
+function zoom(d) {
+    var kx = w / d.dx, ky = h / d.dy;
+    x.domain([d.x, d.x + d.dx]);
+    y.domain([d.y, d.y + d.dy]);
+
+    var t = svg.selectAll("g.cell").transition()
+        .duration(d3.event.altKey ? 7500 : 750)
+        .attr("transform", function(d) {
+            return "translate(" + x(d.x) + "," + y(d.y) + ")"; });
+
+    t.select("rect")
+        .attr("width", function(d) { return kx * d.dx - 1; })
+        .attr("height", function(d) { return ky * d.dy - 1; });
+
+    t.select("text")
+        .attr("x", function(d) { return kx * d.dx / 2; })
+        .attr("y", function(d) { return ky * d.dy / 2; })
+        .style("opacity", function(d) { return kx * d.dx > d.w ? 1 : 0; });
+
+    node = d;
+    d3.event.stopPropagation();
+}
+
 function toTitleCase(str) {
     return str.replace(/\w\S*/g, function(txt) {
         return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
     });
-}
-
-function computeNodesLinks(rows) {
-    var rv = {nodes: [], links: []};
-    var sizes = {};
-
-    for (var i = 0; i < rows.length; i++) {
-        var k = toTitleCase(rows[i].key[0]);
-        sizes[k] = (sizes[k] || 0) + rows[i].value.count;
-    }
-
-    var seen = {};
-
-    var prevmodel = "";
-    var prevsection = "";
-    var j = 1;
-    var base = 0;
-
-    rv.nodes.push({name: 'Cameras', size: 10, type: "root"});
-
-    for (var i = 0; i < rows.length; i++) {
-        var r = rows[i];
-        var model = toTitleCase(r.key[0]);
-
-        if (model != prevmodel) {
-            prevmodel = model;
-
-            rv.nodes.push({name: model, size: sizes[model], type: "make"});
-            rv.links.push({source: j, target: base, value: 1});
-            seen[model] = j;
-            j++;
-        }
-
-        var name = toTitleCase(r.key[1]);
-
-        rv.nodes.push({name: name, size: r.value.count, type: "model"});
-        var s = seen[model], d = j;
-        rv.links.push({source: s, target: d, value: 1});
-        j++;
-    }
-
-    return rv;
-}
-
-function initVis() {
-    var width = window.innerWidth,
-        height = window.innerHeight;
-
-    var color = d3.scale.category20();
-
-    var svg = d3.select("#chart").append("svg")
-        .attr("width", width)
-        .attr("height", height);
-
-    function update() {
-        d3.json(camerasViewURL, function(json) {
-            var nodes = computeNodesLinks(json.rows);
-
-            var allSizes = [];
-            for (var i = 0; i < nodes.nodes.length; i++) {
-                allSizes.push(nodes.nodes[i].size);
-            }
-
-            var sizeScale = d3.scale.linear()
-                .domain([d3.min(allSizes), d3.max(allSizes)])
-                .range([5, 40]);
-
-            var force = d3.layout.force()
-                .charge(-400)
-                .linkDistance(80)
-                .size([width, height]);
-
-            force
-                .nodes(nodes.nodes)
-                .links(nodes.links)
-                .start();
-
-            var link = svg.selectAll("line.link")
-                .data(nodes.links)
-                .enter().append("line")
-                .attr("class", "link")
-                .style("stroke-width", function(d) { return Math.sqrt(d.value); });
-
-            svg.selectAll("line.link")
-                .data(nodes.links)
-                .exit().remove();
-
-            var node = svg.selectAll("circle.node")
-                .data(nodes.nodes)
-                .enter().append("circle")
-                .attr("class", function(d) { return "node " + d.type;})
-                .attr("r", function(d) { return sizeScale(d.size); })
-                .style("fill", function(d) {
-                    return d.type == "model" ? color(d.name) : null;
-                })
-                .call(force.drag);
-
-            node.append("title")
-                .text(function(d) { return d.name + (d.type == 'root' ? '' : " (" + d.size + ")"); });
-
-            svg.selectAll("circle.node")
-                .data(nodes.nodes)
-                .attr("class", function(d) { return "node " + d.type;})
-                .attr("r", function(d) { return sizeScale(d.size); })
-                .style("fill", function(d) {
-                    return d.type == "model" ? color(d.name) : null;
-                })
-                .exit().remove();
-
-            force.on("tick", function() {
-                link.attr("x1", function(d) { return d.source.x; })
-                    .attr("y1", function(d) { return d.source.y; })
-                    .attr("x2", function(d) { return d.target.x; })
-                    .attr("y2", function(d) { return d.target.y; });
-
-                node.attr("cx", function(d) { return d.x; })
-                    .attr("cy", function(d) { return d.y; });
-            });
-        });;
-    }
-
-    update();
 }
