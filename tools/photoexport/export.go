@@ -112,8 +112,6 @@ func feedBody(r io.Reader, results chan<- photo) int64 {
 			results <- photo(thing["doc"].(map[string]interface{}))
 		}
 	}
-
-	return -1
 }
 
 func main() {
