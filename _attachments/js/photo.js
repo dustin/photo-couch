@@ -105,8 +105,10 @@ function UnprocessedCtrl($scope, $http, $routeParams) {
     };
 
     $scope.markChanged = function(photo) {
-        photo.changed = true;
-        $scope.numChanges++;
+        if (!photo.changed) {
+            photo.changed = true;
+            $scope.numChanges++;
+        }
     };
 
     $scope.update = function(photo) {
