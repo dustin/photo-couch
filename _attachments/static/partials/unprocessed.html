@@ -16,7 +16,7 @@
     <textarea ng-change="markChanged(p)"
               ng-model="p.descr" rows="6" cols="40">Uploaded image.</textarea>
     <br/>
-    <button class="changed{{p.changed}}"
+    <button ng-class="{changed: p.changed}"
             ng-disabled="!p.changed"
             ng-click="update(p)">Save</button>
   </fieldset>
@@ -25,7 +25,7 @@
 <hr />
 
 <div>
-  <button class="changed{{numChanges > 0}}"
+  <button ng-class="{changed: numChanges > 0}"
           ng-disabled="numChanges == 0"
           ng-click="updateAll()">Update {{numChanges}}</button>
 </div>
