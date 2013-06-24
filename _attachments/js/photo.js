@@ -111,6 +111,13 @@ function UnprocessedCtrl($scope, $http, $routeParams) {
         }
     };
 
+    $scope.delete = function(photo) {
+        $http.delete("../../" + photo._id + "?rev=" + photo._rev).
+            success(function(data) {
+                $scope.photos = _.filter($scope.photos, function(e) {return e._id !== photo._id;});
+            });
+    };
+
     $scope.update = function(photo) {
         $http.post("_update/photo/" + photo._id,
                    "cat=" + encodeURIComponent(photo.cat) +
