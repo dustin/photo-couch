@@ -89,12 +89,17 @@ function RecentTakenCtrl($scope, $http, $routeParams) {
 }
 
 function UnprocessedCtrl($scope, $http, $routeParams) {
+    $scope.numChanges = 0;
+    $scope.bulkcat = "Private";
+    $scope.bulktaken = "";
+    $scope.bulktags = "unprocessed";
+    $scope.bulkdescr = "";
+
     $http.get('_view/tag?key="unprocessed"&include_docs=true&reduce=false&limit=50').success(function(data) {
         $scope.photos = _.pluck(data.rows, 'doc');
         _.each($scope.photos, function(x) { x.kwstring = x.keywords.join(" "); });
+        $scope.bulktaken = ($scope.photos.length > 0) ? $scope.photos[0].taken : "";
     });
-
-    $scope.numChanges = 0;
 
     $scope.updateAll = function() {
         _.each($scope.photos, function(p) {
@@ -116,6 +121,21 @@ function UnprocessedCtrl($scope, $http, $routeParams) {
             success(function(data) {
                 $scope.photos = _.filter($scope.photos, function(e) {return e._id !== photo._id;});
             });
+    };
+
+    $scope.bulkEdit = function() {
+        _.each($scope.photos, function(p) {
+            if (p.bulkme) {
+                $scope.markChanged(p);
+                p.cat = $scope.bulkcat;
+                p.taken = $scope.bulktaken;
+                p.kwstring = $scope.bulktags;
+            }
+        });
+    };
+
+    $scope.bulkAll = function() {
+        _.each($scope.photos, function(p) { p.bulkme = true; });
     };
 
     $scope.update = function(photo) {

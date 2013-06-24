@@ -1,18 +1,20 @@
-<div id="thumblist" ng-show="photos">
+<div id="unprocessed" ng-show="photos">
   <fieldset ng-repeat="p in photos">
     <legend>An Image from {{p.taken}}</legend>
     <a href="#!/photo/{{p._id}}">
       <img src="../../{{p._id}}/thumb.jpg" alt="an image"
            class="{{p | orient }}"/>
     </a>
+    <br/>
     Category:
     <select ng-model="p.cat" ng-change="markChanged(p)">
       <option value="Private">Private</option>
       <option value="Friends/Family">Friends/Family</option>
       <option value="Public">Public</option>
-    </select><br/>
+    </select>
+    <br/>
     Taken <input ng-model="p.taken" ng-change="markChanged(p)" /><br/>
-    Tags:  <input ng-model="p.kwstring" ng-change="markChanged(p)" /><br/>
+    Tags:  <input ng-model="p.kwstring" ng-change="markChanged(p)" /> <br/>
     <textarea ng-change="markChanged(p)"
               ng-model="p.descr" rows="6" cols="40">Uploaded image.</textarea>
     <br/>
@@ -20,6 +22,9 @@
             ng-disabled="!p.changed"
             ng-click="update(p)">Save</button>
     <button ng-click="delete(p)">DELETE</button>
+    <span class="bulkme">
+      <label>Bulk <input type="checkbox" ng-model="p.bulkme" /></label>
+    </span>
   </fieldset>
 </div>
 
@@ -29,4 +34,21 @@
   <button ng-class="{changed: numChanges > 0}"
           ng-disabled="numChanges == 0"
           ng-click="updateAll()">Update {{numChanges}}</button>
+
+  <hr />
+
+  <h2>Bulk Edit</h2>
+  <fieldset>
+    <select id="bulkcat" ng-change="bulkEdit()" ng-model="bulkcat">
+      <option value="Private">Private</option>
+      <option value="Friends/Family">Friends/Family</option>
+      <option value="Public">Public</option>
+    </select><br/>
+    Taken: <input id="bulktaken" ng-model="bulktaken" ng-change="bulkEdit()" /><br/>
+    Tags: <input id="bulktags" ng-model="bulktags" ng-change="bulkEdit()" /><br/>
+    <textarea ng-change="bulkEdit()"
+              ng-model="bulkdescr"
+              rows="6" cols="40">Uploaded image.</textarea><br />
+    <button ng-click="bulkAll()">Bulk All</button>
+  </fieldset>
 </div>
