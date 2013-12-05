@@ -11,7 +11,7 @@ import (
 	"sync"
 	"time"
 
-	"code.google.com/p/dsallings-couch-go"
+	"github.com/dustin/go-couch"
 )
 
 var outdir = flag.String("out", "output", "Where to write the output")
