@@ -10,5 +10,6 @@
 /_attachments/style/screen.css
 /compass/.sass-cache/
 /tools/photoexport/photoexport
+/tools/phototocamli/phototocamli
 /tools/redirect/redirect
 /tools/s3syncdown/s3syncdown
