@@ -15,6 +15,7 @@ import (
 	"github.com/dustin/go-couch"
 )
 
+var verbose = flag.Bool("v", false, "Verbose")
 var localPath = flag.String("path", "", "Local filesystem location")
 
 type photo struct {
@@ -82,7 +83,9 @@ func feedBody(r io.Reader, results chan<- photo) int64 {
 				log.Fatalf("Error decoding stuff: %#v", err)
 			}
 		}
-		log.Printf("Got %+v", thing)
+		if *verbose {
+			log.Printf("Got %+v", thing)
+		}
 		if thing.LastSeq != nil {
 			return -1
 		} else {
