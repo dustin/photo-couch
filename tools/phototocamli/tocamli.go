@@ -10,6 +10,7 @@ import (
 	"sync"
 	"time"
 
+	"strings"
 	"camlistore.org/pkg/client"
 	"camlistore.org/pkg/schema"
 	"camlistore.org/pkg/syncutil"
@@ -53,6 +54,31 @@ func localPathOf(p photo) string {
 	return filepath.Join(*srcPath, p.Id+"."+p.Extension)
 }
 
+const maxTitle = 50
+
+func mkTitle(s string) string {
+	if len(s) > maxTitle {
+		s = s[:maxTitle] + "…"
+	}
+	return s
+}
+
+var htmlrepl = strings.NewReplacer(
+	"<br/>", "\n",
+	"<em>", "*",
+	"</em>", "*",
+	"<i>", "*",
+	"</i>", "*",
+	"<b>", "**",
+	"</b>", "**",
+	"``", "“",
+	"''", "”",
+)
+
+func cleanHTML(s string) string {
+	return htmlrepl.Replace(s)
+}
+
 func storePhoto(p photo) (string, error) {
 	srcFile := localPathOf(p)
 
@@ -70,9 +96,12 @@ func storePhoto(p photo) (string, error) {
 	}
 	perma := res.BlobRef
 
+	p.Description = cleanHTML(p.Description)
+
 	claims := []*schema.Builder{}
 	claims = append(claims, schema.NewSetAttributeClaim(perma, "camliContent", fileRef.String()))
-	claims = append(claims, schema.NewSetAttributeClaim(perma, "title", p.Description))
+	claims = append(claims, schema.NewSetAttributeClaim(perma, "title", mkTitle(p.Description)))
+	claims = append(claims, schema.NewSetAttributeClaim(perma, "description", p.Description))
 	for _, t := range p.Tags {
 		claims = append(claims, schema.NewAddAttributeClaim(perma, "tag", t))
 	}
