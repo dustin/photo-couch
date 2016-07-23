@@ -15,6 +15,7 @@ import (
 	"time"
 
 	"github.com/dustin/go-couch"
+	"github.com/dustin/httputil"
 )
 
 var (
@@ -26,6 +27,7 @@ var (
 	origTmplTxt = flag.String("orig_src", "", "template for orig URLs")
 	getAtts     = flag.Bool("get_atts", false, "fetch attachments")
 	exiftool    = flag.String("exiftool", "", "path to exiftool")
+	storeMeta   = flag.Bool("store_meta", false, "store metadata json")
 
 	origTmpl *template.Template
 )
@@ -59,6 +61,10 @@ type photo struct {
 		ContentType string `json:"content_type"`
 		Length      int
 	} `json:"_attachments"`
+}
+
+func (p photo) filepath() string {
+	return fmt.Sprintf("%s/%s", *outdir, p.ID)
 }
 
 func (p photo) taken() time.Time {
@@ -114,50 +120,70 @@ func updateExif(fn string, p photo) error {
 	return cmd.Run()
 }
 
-func storeFile(db *couch.Database, pf photoFile) {
+func storeFile(db *couch.Database, pf photoFile) error {
 	u := pf.url
 	if u == "" {
 		u = fmt.Sprintf("%s/%s/%s", db.DBURL(), pf.p.ID, pf.fn)
 	}
-	outfile := fmt.Sprintf("%s/%s/%s", *outdir, pf.p.ID, pf.fn)
+	outfile := fmt.Sprintf("%s/%s", pf.p.filepath(), pf.fn)
 
 	res, err := http.Get(u)
-	maybefatal(err, "Couldn't fetch %v: %v", u, err)
+	if err != nil {
+		return err
+	}
 	if res.StatusCode != 200 {
-		log.Fatalf("Couldn't fetch %v: %v", u, res.Status)
+		return httputil.HTTPError(res)
 	}
 	defer res.Body.Close()
 
 	f, err := os.Create(outfile)
-	maybefatal(err, "Creating image file: %v", err)
+	if err != nil {
+		return err
+	}
 	defer f.Close()
 
 	_, err = io.Copy(f, res.Body)
-	maybefatal(err, "Error copying blob for %v: %v", u, err)
+	if err != nil {
+		return err
+	}
 
 	if err := updateExif(outfile, pf.p); err != nil {
-		log.Printf("!!! Failed to update exif of %v: %v", pf.p.ID, err)
+		log.Printf("Failed to update exif of %v: %v", pf.p.ID, err)
+		failedf := fmt.Sprintf("%s/failed/%s.%s", *outdir, pf.p.ID, pf.p.Extension)
+		if err := os.Rename(outfile, failedf); err != nil {
+			log.Printf("Error renaming failed %v to %vfile: %v",
+				outfile, failedf, err)
+		}
+		if err := storeDetails(pf.p); err != nil {
+			log.Printf("Error writing out detail json: %v", err)
+		}
+		jfi := fmt.Sprintf("%s/%s/details.json", *outdir, pf.p.ID)
+		jfo := fmt.Sprintf("%s/failed/%s.json", *outdir, pf.p.ID)
+		if err := os.Rename(jfi, jfo); err != nil {
+			log.Printf("Error moving json stuff into failed dir: %v", err)
+		}
+		return err
 	}
+	return nil
 }
 
-func storeDetails(p photo) {
-	err := os.MkdirAll(fmt.Sprintf("%v/%v", *outdir, p.ID), 0777)
-	maybefatal(err, "Creating directory for %v: %v", p.ID, err)
-
+func storeDetails(p photo) error {
 	fn := fmt.Sprintf("%v/%v/details.json", *outdir, p.ID)
 	f, err := os.Create(fn)
-	maybefatal(err, "Creating details file: %v", err)
+	if err != nil {
+		return err
+	}
 	defer f.Close()
-	e := json.NewEncoder(f)
-	err = e.Encode(p)
-	maybefatal(err, "Error encoding details: %v", err)
+	return json.NewEncoder(f).Encode(p)
 }
 
 func handleFiles(db *couch.Database, fch <-chan photoFile) {
 	defer wg.Done()
 	for f := range fch {
 		log.Printf(" Grabbing %v/%v", f.p.ID, f.fn)
-		storeFile(db, f)
+		if err := storeFile(db, f); err != nil {
+			log.Printf("Error processing %v: %v", f.p.ID, err)
+		}
 	}
 }
 
@@ -168,9 +194,15 @@ func handlePhotos(ch <-chan photo, fch chan<- photoFile) {
 		if p.Type != "photo" {
 			continue
 		}
-		if !(origTmpl != nil || (*getAtts && len(p.Attachments) > 0)) {
+		if !(origTmpl != nil || *storeMeta || (*getAtts && len(p.Attachments) > 0)) {
 			continue
 		}
+		log.Printf("Photo: %v", p.Descr)
+		if err := os.MkdirAll(fmt.Sprintf("%v/%v", *outdir, p.ID), 0777); err != nil {
+			log.Printf("Error creating dirs: %v", err)
+			continue
+		}
+
 		if origTmpl != nil {
 			buf := &bytes.Buffer{}
 			if err := origTmpl.Execute(buf, p); err != nil {
@@ -178,8 +210,11 @@ func handlePhotos(ch <-chan photo, fch chan<- photoFile) {
 			}
 			fch <- photoFile{p, buf.String(), "orig." + p.Extension}
 		}
-		log.Printf("Photo: %v", p.Descr)
-		storeDetails(p)
+		if *storeMeta {
+			if err := storeDetails(p); err != nil {
+				log.Printf("Error storing details: %v", err)
+			}
+		}
 		if *getAtts {
 			for k, v := range p.Attachments {
 				log.Printf("  %v -> %v", k, v.Length)
@@ -225,7 +260,7 @@ func main() {
 		}
 	}
 
-	err := os.MkdirAll(*outdir, 0777)
+	err := os.MkdirAll(*outdir+"/failed", 0777)
 	maybefatal(err, "Error creating output dir: %v", err)
 
 	db, err := couch.Connect(flag.Arg(0))
