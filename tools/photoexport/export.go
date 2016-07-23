@@ -231,7 +231,7 @@ func feedBody(r io.Reader, results chan<- photo) int64 {
 	for {
 		thing := struct {
 			LastSeq *string `json:"last_seq"`
-			Doc     photo
+			Doc     *json.RawMessage
 		}{}
 		err := d.Decode(&thing)
 		if err != nil {
@@ -239,13 +239,19 @@ func feedBody(r io.Reader, results chan<- photo) int64 {
 			case "unexpected EOF", "EOF":
 				return -1
 			default:
-				log.Fatalf("Error decoding stuff: %#v", err)
+				log.Printf("Error decoding stuff: %#v -- shutting down reader", err)
+				continue
 			}
 		}
 		if thing.LastSeq != nil {
 			return -1
 		}
-		results <- photo(thing.Doc)
+		p := photo{}
+		if err := json.Unmarshal([]byte(*thing.Doc), &p); err != nil {
+			log.Printf("Error unmarshaling photo from %s: %v", thing.Doc, err)
+			return -1
+		}
+		results <- p
 	}
 }
 
