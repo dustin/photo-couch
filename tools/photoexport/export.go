@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bytes"
 	"encoding/json"
 	"flag"
 	"fmt"
@@ -8,18 +9,73 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"os/exec"
 	"sync"
+	"text/template"
 	"time"
 
 	"github.com/dustin/go-couch"
 )
 
-var outdir = flag.String("out", "output", "Where to write the output")
+var (
+	outdir      = flag.String("out", "output", "Where to write the output")
+	awsId       = os.Getenv("AWS_ACCESS_KEY_ID")
+	awsKey      = os.Getenv("AWS_SECRET_ACCESS_KEY")
+	s3Loc       = "s3.amazonaws.com"
+	bucket      = flag.String("bucket", "photo.west.spy.net", "aws bucket")
+	origTmplTxt = flag.String("orig_src", "", "template for orig URLs")
+	getAtts     = flag.Bool("get_atts", false, "fetch attachments")
+	exiftool    = flag.String("exiftool", "", "path to exiftool")
 
-type photo map[string]interface{}
+	origTmpl *template.Template
+)
+
+const (
+	takenFmt = "2006-01-02"
+	tsFmt    = "2006-01-02T15:04:05"
+	exifFmt  = "2006:01:02 15:04:05"
+)
+
+type photo struct {
+	ID          string   `json:"_id"`
+	Rev         string   `json:"_rev"`
+	Keywords    []string `json:"keywords"`
+	Descr       string   `json:"descr"`
+	TS          string   `json:"ts"`
+	Addedby     string   `json:"addedby"`
+	Extension   string   `json:"extension"`
+	Taken       string   `json:"taken"`
+	Type        string   `json:"type"`
+	Annotations []struct {
+		Title   string `json:"title"`
+		Ts      string `json:"ts"`
+		Addedby string `json:"addedby"`
+		Height  int    `json:"height"`
+		Width   int    `json:"width"`
+		Y       int    `json:"y"`
+		X       int    `json:"x"`
+	} `json:"annotations"`
+	Attachments map[string]struct {
+		ContentType string `json:"content_type"`
+		Length      int
+	} `json:"_attachments"`
+}
+
+func (p photo) taken() time.Time {
+	t, err := time.Parse(takenFmt, p.Taken)
+	maybefatal(err, "error parsing taken from %v: %v", p, err)
+	return t
+}
+
+func (p photo) ts() time.Time {
+	t, err := time.Parse(takenFmt, p.TS)
+	maybefatal(err, "error parsing timestamp from %v: %v", p, err)
+	return t
+}
+
 type photoFile struct {
-	p  map[string]interface{}
-	fn string
+	p       photo
+	url, fn string
 }
 
 var wg sync.WaitGroup
@@ -30,9 +86,40 @@ func maybefatal(err error, msg string, args ...interface{}) {
 	}
 }
 
+func updateExif(fn string, p photo) error {
+	if *exiftool == "" {
+		return nil
+	}
+
+	descr := p.Descr
+	if len(p.Annotations) > 0 {
+		j, err := json.Marshal(descr)
+		if err != nil {
+			log.Printf("Error marshaling: %v", err)
+		}
+		descr += "\nAnnotations: " + string(j)
+	}
+
+	argv := []string{"-overwrite_original",
+		"-description=" + descr,
+		"-AllDates=" + p.taken().Format(exifFmt),
+	}
+	for _, k := range p.Keywords {
+		argv = append(argv, "-keywords="+k)
+	}
+	argv = append(argv, fn)
+
+	cmd := exec.Command(*exiftool, argv...)
+	cmd.Stderr = os.Stderr
+	return cmd.Run()
+}
+
 func storeFile(db *couch.Database, pf photoFile) {
-	u := fmt.Sprintf("%s/%s/%s", db.DBURL(), pf.p["_id"], pf.fn)
-	outfile := fmt.Sprintf("%s/%s/%s", *outdir, pf.p["_id"], pf.fn)
+	u := pf.url
+	if u == "" {
+		u = fmt.Sprintf("%s/%s/%s", db.DBURL(), pf.p.ID, pf.fn)
+	}
+	outfile := fmt.Sprintf("%s/%s/%s", *outdir, pf.p.ID, pf.fn)
 
 	res, err := http.Get(u)
 	maybefatal(err, "Couldn't fetch %v: %v", u, err)
@@ -47,13 +134,17 @@ func storeFile(db *couch.Database, pf photoFile) {
 
 	_, err = io.Copy(f, res.Body)
 	maybefatal(err, "Error copying blob for %v: %v", u, err)
+
+	if err := updateExif(outfile, pf.p); err != nil {
+		log.Printf("!!! Failed to update exif of %v: %v", pf.p.ID, err)
+	}
 }
 
 func storeDetails(p photo) {
-	err := os.MkdirAll(fmt.Sprintf("%v/%v", *outdir, p["_id"]), 0777)
-	maybefatal(err, "Creating directory for %v: %v", p["_id"], err)
+	err := os.MkdirAll(fmt.Sprintf("%v/%v", *outdir, p.ID), 0777)
+	maybefatal(err, "Creating directory for %v: %v", p.ID, err)
 
-	fn := fmt.Sprintf("%v/%v/details.json", *outdir, p["_id"])
+	fn := fmt.Sprintf("%v/%v/details.json", *outdir, p.ID)
 	f, err := os.Create(fn)
 	maybefatal(err, "Creating details file: %v", err)
 	defer f.Close()
@@ -65,7 +156,7 @@ func storeDetails(p photo) {
 func handleFiles(db *couch.Database, fch <-chan photoFile) {
 	defer wg.Done()
 	for f := range fch {
-		log.Printf(" Grabbing %v/%v", f.p["_id"], f.fn)
+		log.Printf(" Grabbing %v/%v", f.p.ID, f.fn)
 		storeFile(db, f)
 	}
 }
@@ -74,19 +165,26 @@ func handlePhotos(ch <-chan photo, fch chan<- photoFile) {
 	defer wg.Done()
 	defer close(fch)
 	for p := range ch {
-		if p["type"] != "photo" {
+		if p.Type != "photo" {
 			continue
 		}
-		att, ok := p["_attachments"]
-		if !ok {
+		if !(origTmpl != nil || (*getAtts && len(p.Attachments) > 0)) {
 			continue
 		}
-		log.Printf("Photo: %v", p["descr"])
+		if origTmpl != nil {
+			buf := &bytes.Buffer{}
+			if err := origTmpl.Execute(buf, p); err != nil {
+				log.Fatalf("Error constructing %v: %v", p, err)
+			}
+			fch <- photoFile{p, buf.String(), "orig." + p.Extension}
+		}
+		log.Printf("Photo: %v", p.Descr)
 		storeDetails(p)
-		for k, vx := range att.(map[string]interface{}) {
-			v := vx.(map[string]interface{})
-			log.Printf("  %v -> %v", k, v["length"])
-			fch <- photoFile{p, k}
+		if *getAtts {
+			for k, v := range p.Attachments {
+				log.Printf("  %v -> %v", k, v.Length)
+				fch <- photoFile{p, "", k}
+			}
 		}
 	}
 }
@@ -96,7 +194,10 @@ func feedBody(r io.Reader, results chan<- photo) int64 {
 	d := json.NewDecoder(r)
 
 	for {
-		thing := map[string]interface{}{}
+		thing := struct {
+			LastSeq *string `json:"last_seq"`
+			Doc     photo
+		}{}
 		err := d.Decode(&thing)
 		if err != nil {
 			switch err.Error() {
@@ -106,16 +207,23 @@ func feedBody(r io.Reader, results chan<- photo) int64 {
 				log.Fatalf("Error decoding stuff: %#v", err)
 			}
 		}
-		if _, ok := thing["last_seq"]; ok {
+		if thing.LastSeq != nil {
 			return -1
-		} else {
-			results <- photo(thing["doc"].(map[string]interface{}))
 		}
+		results <- photo(thing.Doc)
 	}
 }
 
 func main() {
 	flag.Parse()
+
+	if *origTmplTxt != "" {
+		var err error
+		origTmpl, err = template.New("").Parse(*origTmplTxt)
+		if err != nil {
+			log.Fatalf("Can't parse template: %v", err)
+		}
+	}
 
 	err := os.MkdirAll(*outdir, 0777)
 	maybefatal(err, "Error creating output dir: %v", err)
