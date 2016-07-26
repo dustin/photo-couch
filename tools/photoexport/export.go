@@ -20,10 +20,6 @@ import (
 
 var (
 	outdir      = flag.String("out", "output", "Where to write the output")
-	awsId       = os.Getenv("AWS_ACCESS_KEY_ID")
-	awsKey      = os.Getenv("AWS_SECRET_ACCESS_KEY")
-	s3Loc       = "s3.amazonaws.com"
-	bucket      = flag.String("bucket", "photo.west.spy.net", "aws bucket")
 	origTmplTxt = flag.String("orig_src", "", "template for orig URLs")
 	getAtts     = flag.Bool("get_atts", false, "fetch attachments")
 	exiftool    = flag.String("exiftool", "", "path to exiftool")
