@@ -248,7 +248,7 @@ func feedBody(r io.Reader, results chan<- photo) int64 {
 		}
 		p := photo{}
 		if err := json.Unmarshal([]byte(*thing.Doc), &p); err != nil {
-			log.Printf("Error unmarshaling photo from %s: %v", thing.Doc, err)
+			log.Printf("Error unmarshaling photo from %v: %v", thing.Doc, err)
 			return -1
 		}
 		results <- p
